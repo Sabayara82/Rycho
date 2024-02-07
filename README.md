@@ -1,2 +1,2 @@
 # Rycho
-Rycho is a audio sharing social media application for music and podcast enthusiasts. 
+Rycho is an audio sharing social media application for music and podcast enthusiasts. 
