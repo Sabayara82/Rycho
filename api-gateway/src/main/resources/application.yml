@@ -1,0 +1,25 @@
+spring:
+  application:
+      name:
+        api-gateway
+
+# tell the gateway server where to look for your service registry server.
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8765/eureka/
+
+
+spring:
+  cloud:
+    gateway:
+      # routes:
+      # # create a route for every service that we will need to route to
+      #   id: content-route #can be anything
+      #   uri: ${CONTENT_ROUTE_URI:http://localhost:3000} # With this format you can overwrite it in a different environment, else: http://localhost:3000
+      #   predicates: #Conditions that must be met for the route to be applied. 
+      #     - path=/content/**
+      #   # filters:
+      #   #   PrefixPath=/api
+      discovery: 
+        locator: enabled=true
