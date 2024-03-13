@@ -1,20 +1,21 @@
 import FeedItem from './FeedItem';
 import comment from './comment';
-import currentUserDetails from './currentUserDetails';
+import currentUserDetails from '../currentUserDetails';
 import theUser from './theUser'; 
 
 // an instance of currentUserDetails
 const currentUser: currentUserDetails = {
     id: 1,
     userId: 123,
-    followingIDs: [456, 789]
+    followingIDs: [456, 789], 
+    roomSubs: [0]
 };
 
 // an instance of theUser
 const users: theUser[] = [
-    { id: 456, userName: "User1", theirPosts : [{userId: 456, albumName:"lily", song: "boob", albumUrl: "", createdAt: new Date(), description: "ewurhiwuer", theUser: "sdfdsf", likes: 20, comments: [], postId: 2}]},
-    { id: 789, userName: "User2", theirPosts : [{userId: 456, albumName:"rose", song: "bop", albumUrl: "", createdAt: new Date(), description: "adfa", theUser: "fdf", likes: 2, comments: [], postId: 3}]},
-    { id: 101, userName: "User3", theirPosts : [{userId: 456, albumName:"deep", song: "drop", albumUrl: "", createdAt: new Date(), description: "sdfdsf", theUser: "ddd", likes: 321, comments: [], postId: 1}]}
+    { id: 456, userName: "User1", theirPosts : [{userId: 456, albumName:"lily", song: "boob", albumUrl: "", createdAt: new Date(), description: "ewurhiwuer", theUser: "sdfdsf", likes: 20, comments: [], postId: 2, roomStat: false}]},
+    { id: 789, userName: "User2", theirPosts : [{userId: 456, albumName:"rose", song: "bop", albumUrl: "", createdAt: new Date(), description: "adfa", theUser: "fdf", likes: 2, comments: [], postId: 3, roomStat: false}]},
+    { id: 101, userName: "User3", theirPosts : [{userId: 456, albumName:"deep", song: "drop", albumUrl: "", createdAt: new Date(), description: "sdfdsf", theUser: "ddd", likes: 321, comments: [], postId: 1, roomStat: false}]}
 ];
 
 
@@ -23,7 +24,9 @@ const theFeed: number[] = [];
 for (const user of users) {
     if (currentUser.followingIDs.includes(user.id)) {
         for (const post of user.theirPosts) {
-            theFeed.push(post.postId);
+            if(!post.roomStat){
+                theFeed.push(post.postId);
+            }   
         }
     }
 }

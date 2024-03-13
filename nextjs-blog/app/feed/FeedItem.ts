@@ -10,6 +10,7 @@ interface FeedItem {
     likes: number;
     comments: comment[];
     postId: number;
+    roomStat: boolean; 
 
 }
 
