@@ -1,5 +1,6 @@
+import comment from './comment';
 interface FeedItem {
-    id: number;
+    userId: number;
     albumName: string;
     song: string;
     albumUrl: string;
@@ -7,7 +8,8 @@ interface FeedItem {
     description: string;
     theUser: string; 
     likes: number;
-    comments: Comment[];
+    comments: comment[];
+    postId: number;
 
 }
 
