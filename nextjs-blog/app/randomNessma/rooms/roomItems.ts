@@ -1,4 +1,4 @@
-import FeedItem from '../../app/feed/FeedItem';
+import FeedItem from '../FeedItem';
 interface roomItems{
     roomId: number; 
     roomTitle: string;
