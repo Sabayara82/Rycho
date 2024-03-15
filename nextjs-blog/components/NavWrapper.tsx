@@ -21,7 +21,7 @@ const NavWrapper = () => {
                 <p className="font-semibold mt-1">Rycho Logo</p>
                 
             </div>
-            <Nav/>
+            {/* <Nav/> */}
         </nav>
     )
 }

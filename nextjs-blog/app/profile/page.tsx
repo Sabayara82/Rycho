@@ -1,6 +1,27 @@
+"use client"
+
+import React, { useEffect } from 'react';
 import Image from "next/image";
 
 export default function Home() {
+
+  const [token, setToken] = React.useState("");
+
+  useEffect(() => {
+    const hash = window.location.hash
+    let storedToken = window.localStorage.getItem("token")
+
+    if (!storedToken && hash) {
+      storedToken = hash.substring(1).split("&").find((elem: string) => elem.startsWith("access_token"))?.split("=")[1] ?? null
+
+        window.location.hash = ""
+        window.localStorage.setItem("token", storedToken ?? "")
+        
+    }
+
+    setToken(storedToken ?? "")
+  }, [])  
+
   return (
     <div className="flex min-h-screen flex-col bg-[#121212] mt-20 max-w-7xl min-h-96 mx-auto rounded-3xl p-10">
         <h1 className="text-4xl font-semibold text-center mb-8">Profile</h1>

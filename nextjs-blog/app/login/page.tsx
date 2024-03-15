@@ -7,13 +7,18 @@ import {useRouter} from "next/navigation";
 
 
 export default function page() {
+    const CLIENT_ID = "f9010a7f16bd4939a67261cce4b5cc6f"
+    const REDIRECT_URI = "http://localhost:3000/profile"
+    const AUTH_ENDPOINT = "https://accounts.spotify.com/authorize"
+    const RESPONSE_TYPE = "token"
+
     const router = useRouter();
+
+    const [buttonDisabled, setButtonDisabled] = React.useState(false);
     const [user, setUser] = React.useState({
         email: "",
         password: "",
-    })
-
-    const [buttonDisabled, setButtonDisabled] = React.useState(false);
+    })  
 
     const onLogin = async () => {
       try {
@@ -60,6 +65,7 @@ export default function page() {
             ${!buttonDisabled ? "bg-gradient-to-r from-yellow-400 via-pink-500 to-purple-500" : "text-gray-600"}`}>       
             Login
         </button>
+        <a className="underline" href={`${AUTH_ENDPOINT}?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=${RESPONSE_TYPE}`}>Login with Spotify</a>
         <div className="text-sm">
                 Don't have an account?{' '}
                 <Link href="/signup" className="underline">
