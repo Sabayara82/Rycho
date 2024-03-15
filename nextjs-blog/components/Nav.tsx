@@ -30,7 +30,7 @@ const Nav = () => {
     }
 
     return (
-        <nav className="bg-[#121212] flex justify-between items-center w-full pt-2 pb-4">
+        <nav className="bg-[#121212] flex justify-between items-center w-full pt-1 pb-2">
             <div className="flex gap-2 flex-center pl-5 pt-2 max-w-fit">
                 <Image className="bg-[#ffffff] rounded-full object-contain"
                     src="/user.png"
@@ -38,19 +38,21 @@ const Nav = () => {
                     width={30} 
                     height={30} 
                 />
-                <p className="font-semibold mt-1">Rycho Logo</p>
+                <p className="font-bebas-neue-regular text-2xl">Rycho</p>
             </div>
             {token && (
                 <div className="flex justify-end ">
-                    <Image className="h-6 mt-3 mr-4"
-                        src="/notification.png"
-                        alt="image not found"
-                        width={32} 
-                        height={12} 
-                    />
+                    <div className="bg-[#000000] rounded-full h-10 mt-2 w-10 mr-4 flex justify-center items-center">
+                        <Image
+                            src="/notification.png"
+                            alt="image not found"
+                            width={32}
+                            height={12}
+                        />
+                    </div>
                     <button 
                         onClick={logout}
-                        className="font-semibold rounded-full bg-gradient-to-r from-yellow-400 via-pink-500 to-purple-500 py-1 px-5 mt-2 mr-10">
+                        className="font-semibold rounded-full bg-gradient-to-r from-yellow-400 via-pink-500 to-purple-500 py-1.5 px-4 mt-3 mb-1 mr-10 text-sm">
                             Sign out
                     </button>        
                 </div>   

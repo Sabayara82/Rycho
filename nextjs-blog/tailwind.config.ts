@@ -14,6 +14,9 @@ const config: Config = {
           "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
       },
     },
+    fontFamily: {
+      "bebas-neue-regular": ['Bebas Neue', 'sans-serif']
+    },    
   },
   plugins: [],
 };
