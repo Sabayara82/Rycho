@@ -42,11 +42,11 @@ const Nav = () => {
             </div>
             {token && (
                 <div className="flex justify-end ">
-                    <Image className="h-7 mt-2.5 mr-4"
+                    <Image className="h-6 mt-3 mr-4"
                         src="/notification.png"
                         alt="image not found"
-                        width={42} 
-                        height={32} 
+                        width={32} 
+                        height={12} 
                     />
                     <button 
                         onClick={logout}
