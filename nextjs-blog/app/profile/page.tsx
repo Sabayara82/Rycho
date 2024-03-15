@@ -43,9 +43,6 @@ export default function Home() {
     setUserName(data.display_name)
     if (data.images && data.images.length > 0) {
       setUserImage(data.images[1].url);
-      console.log("here")
-    } else {
-      console.log("not here")
     }
   }
   

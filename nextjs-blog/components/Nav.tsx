@@ -31,7 +31,7 @@ const Nav = () => {
 
     return (
         <nav className="bg-[#121212] flex justify-between items-center w-full pt-1 pb-2">
-            <div className="flex gap-2 flex-center pl-5 pt-2 max-w-fit">
+            <a href={token ? '/profile' : '/login'} className="flex gap-2 flex-center pl-5 pt-2 max-w-fit">
                 <Image className="bg-[#ffffff] rounded-full object-contain"
                     src="/user.png"
                     alt="image not found"
@@ -39,7 +39,7 @@ const Nav = () => {
                     height={30} 
                 />
                 <p className="font-bebas-neue-regular text-2xl">Rycho</p>
-            </div>
+            </a>
             {token && (
                 <div className="flex justify-end ">
                     <div className="bg-[#000000] rounded-full h-10 mt-2 w-10 mr-4 flex justify-center items-center">
