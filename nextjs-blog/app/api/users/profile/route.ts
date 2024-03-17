@@ -41,10 +41,15 @@ export async function POST(request: NextRequest) {
 }
 
 export async function PUT(request: NextRequest) {
-    const req = await request.json();
-    if (req.method === 'addFollowing') {
-        try {            
-            const { userId, followUserId } = req.body;
+    try {
+        const reqBody = await request.json();
+
+        if (!reqBody.action) {
+            return NextResponse.json({ error: "Action parameter is missing" }, { status: 400 });
+        }
+
+        if (reqBody.action === 'addFollowing') {
+            const { userId, followUserId } = reqBody;
 
             const user = await User.findById(userId);
 
@@ -69,13 +74,50 @@ export async function PUT(request: NextRequest) {
                 message: "User is now following the user",
                 success: true
             });
+        } else if (reqBody.action === 'addFollower') {
+                const { userId, followUserId } = reqBody;
 
-        } catch (error: any) {
-            return NextResponse.json({ error: error.message }, { status: 500 });
+                const user = await User.findById(userId);
+
+                if (!user) {
+                    return NextResponse.json({ error: "User not found" }, { status: 404 });
+                }
+
+                const followUser = await User.findById(followUserId);
+
+                if (!followUser) {
+                    return NextResponse.json({ error: "User to follow not found" }, { status: 404 });
+                }
+
+                if (user.followers.includes(followUserId)) {
+                    return NextResponse.json({ error: "User already follows this user" }, { status: 400 });
+                }
+
+                user.followers.push(followUserId);
+                await user.save();
+
+                return NextResponse.json({
+                    message: "User is now following the user",
+                    success: true
+                });
+        } else {
+            return NextResponse.json({ error: "Invalid action" }, { status: 400 });
         }
-    } else if (req.method === 'addFollower') {
-        try {
-            const { userId, followerUserId } = req.body;
+    } catch (error: any) {
+        return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+}
+
+export async function DELETE(request: NextRequest) {
+    try {
+        const reqBody = await request.json();
+
+        if (!reqBody.action) {
+            return NextResponse.json({ error: "Action parameter is missing" }, { status: 400 });
+        }
+
+        if (reqBody.action === 'removeFollowing') {
+            const { userId, followUserId } = reqBody;
 
             const user = await User.findById(userId);
 
@@ -83,32 +125,45 @@ export async function PUT(request: NextRequest) {
                 return NextResponse.json({ error: "User not found" }, { status: 404 });
             }
 
-            const followerUser = await User.findById(followerUserId);
-
-            if (!followerUser) {
-                return NextResponse.json({ error: "Follower user not found" }, { status: 404 });
+            const index = user.following.indexOf(followUserId);
+            if (index === -1) {
+                return NextResponse.json({ error: "User is not following this user" }, { status: 400 });
             }
 
-            if (user.followers.includes(followerUserId)) {
-                return NextResponse.json({ error: "User is already followed by this follower" }, { status: 400 });
-            }
-
-            user.followers.push(followerUserId);
+            user.following.splice(index, 1);
             await user.save();
 
             return NextResponse.json({
-                message: "Follower added successfully",
+                message: "User is no longer following the user",
                 success: true
             });
+        } else if (reqBody.action === 'removeFollower') {
+            const { userId, followUserId } = reqBody;
 
-        } catch (error: any) {
-            return NextResponse.json({ error: error.message }, { status: 500 });
+            const user = await User.findById(userId);
+
+            if (!user) {
+                return NextResponse.json({ error: "User not found" }, { status: 404 });
+            }
+
+            const index = user.followers.indexOf(followUserId);
+            if (index === -1) {
+                return NextResponse.json({ error: "User is not following this user" }, { status: 400 });
+            }
+
+            user.followers.splice(index, 1);
+            await user.save();
+
+            return NextResponse.json({
+                message: "User is no longer following the user",
+                success: true
+            });
+        } else {
+            return NextResponse.json({ error: "Invalid action" }, { status: 400 });
         }
-    } else {
-        return NextResponse.json({error: 'Method Not Allowed'},
-        {status: 405})
+    } catch (error: any) {
+        return NextResponse.json({ error: error.message }, { status: 500 });
     }
-
 }
 
 // export async function GET(request: NextRequest) {
