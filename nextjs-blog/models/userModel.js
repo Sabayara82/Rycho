@@ -9,16 +9,16 @@ const userSchema = new mongoose.Schema({
     username: {
         type: String
     },
-    followers: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User'
-    }],
-    following: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User'
-    }]
+    followers: {
+        type: [String],
+        default: []
+    },
+    following: {
+        type: [String],
+        default: []
+    }
 });
 
 const User = mongoose.models.users || mongoose.model("users", userSchema);
 
-export default User;
+export default User;
