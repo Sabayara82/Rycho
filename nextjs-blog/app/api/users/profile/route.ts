@@ -39,3 +39,73 @@ export async function POST(request: NextRequest) {
             {status: 405})
     }
 }
+
+export async function PUT(request: NextRequest) {
+    try {
+        const reqBody = await request.json();
+
+        if (!reqBody.action) {
+            return NextResponse.json({ error: "Action parameter is missing" }, { status: 400 });
+        }
+
+        if (reqBody.action === 'addFollowing') {
+            const { userId, followUserId } = reqBody;
+
+            const user = await User.findById(userId);
+
+            if (!user) {
+                return NextResponse.json({ error: "User not found" }, { status: 404 });
+            }
+
+            const followUser = await User.findById(followUserId);
+
+            if (!followUser) {
+                return NextResponse.json({ error: "User to follow not found" }, { status: 404 });
+            }
+
+            if (user.following.includes(followUserId)) {
+                return NextResponse.json({ error: "User already follows this user" }, { status: 400 });
+            }
+
+            user.following.push(followUserId);
+            await user.save();
+
+            return NextResponse.json({
+                message: "User is now following the user",
+                success: true
+            });
+        } else if (reqBody.action === 'addFollower') {
+                const { userId, followUserId } = reqBody;
+
+                const user = await User.findById(userId);
+
+                if (!user) {
+                    return NextResponse.json({ error: "User not found" }, { status: 404 });
+                }
+
+                const followUser = await User.findById(followUserId);
+
+                if (!followUser) {
+                    return NextResponse.json({ error: "User to follow not found" }, { status: 404 });
+                }
+
+                if (user.followers.includes(followUserId)) {
+                    return NextResponse.json({ error: "User already follows this user" }, { status: 400 });
+                }
+
+                user.followers.push(followUserId);
+                await user.save();
+
+                return NextResponse.json({
+                    message: "User is now following the user",
+                    success: true
+                });
+        } else {
+            return NextResponse.json({ error: "Invalid action" }, { status: 400 });
+        }
+    } catch (error: any) {
+        return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+}
+
+

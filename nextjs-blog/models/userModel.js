@@ -9,14 +9,14 @@ const userSchema = new mongoose.Schema({
     username: {
         type: String
     },
-    followers: {
-        type: [String],
-        default: []
-    },
-    following: {
-        type: [String],
-        default: []
-    }
+    followers: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+    }],
+    following: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+    }]
 });
 
 const User = mongoose.models.users || mongoose.model("users", userSchema);
