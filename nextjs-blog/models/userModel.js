@@ -1,25 +1,23 @@
 import mongoose from "mongoose";
 
 const userSchema = new mongoose.Schema({
+    spotifyId: {
+        type: String,
+        required: true,
+        unique: true
+    },
     username: {
-        type: String,
-        required: [true, "Please provie a username"],
-        unique: true,
+        type: String
     },
-    email: {
-        type: String,
-        required: [true, "Please provie an email"],
-        unique: true,
+    followers: {
+        type: [String],
+        default: []
     },
-    password: {
-        type: String,
-        required: [true, "Please provie a password"],
-    },
-    isAdmin: {
-        type: Boolean,
-        default: false,
-    },
-})
+    following: {
+        type: [String],
+        default: []
+    }
+});
 
 const User = mongoose.models.users || mongoose.model("users", userSchema);
 

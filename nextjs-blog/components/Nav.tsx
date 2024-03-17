@@ -17,21 +17,15 @@ const Nav = () => {
         }
     }, []);
 
-    const logout = async () => {
-        try {
-            await axios.get('/api/users/logout')
-            console.log("Logout successful")
-            window.localStorage.removeItem("token");
-            router.push('/login')
-            setToken(null);            
-        } catch (error:any) {
-            console.log(error.message)
-        }
+    const logout = () => {
+        window.localStorage.removeItem("token");
+        router.push('/login')
+        setToken(null);      
     }
 
     return (
         <nav className="bg-[#121212] flex justify-between items-center w-full pt-1 pb-2">
-            <a href={token ? '/profile' : '/login'} className="flex gap-2 flex-center pl-5 pt-2 max-w-fit">
+            <a href={token ? '/profile' : '/login'} className="flex gap-2 flex-center pl-5 pt-2 ml-4 max-w-fit">
                 <Image className="bg-[#ffffff] rounded-full object-contain"
                     src="/user.png"
                     alt="image not found"
@@ -42,7 +36,7 @@ const Nav = () => {
             </a>
             {token && (
                 <div className="flex justify-end ">
-                    <div className="bg-[#000000] rounded-full h-10 mt-2 w-10 mr-4 flex justify-center items-center">
+                    <div className="transition duration-500 border-2 border-white-500 hover:border-[#121212] bg-[#000000] rounded-full h-10 mt-2 w-10 mr-4 flex justify-center items-center cursor-pointer">
                         <Image
                             src="/notification.png"
                             alt="image not found"
@@ -52,7 +46,7 @@ const Nav = () => {
                     </div>
                     <button 
                         onClick={logout}
-                        className="font-semibold rounded-full bg-gradient-to-r from-yellow-400 via-pink-500 to-purple-500 py-1.5 px-4 mt-3 mb-1 mr-10 text-sm">
+                        className="font-semibold rounded-full transition duration-500 border-2 border-white-500 hover:border-[#121212] bg-gradient-to-r from-yellow-400 via-pink-500 to-purple-500 py-1.5 px-4 mt-2.5 mb-1 mr-10 text-sm">
                             Sign out
                     </button>        
                 </div>   
