@@ -9,10 +9,13 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "next": "14.1.0",
+    "axios": "^1.6.7",
+    "mongoose": "^8.2.1",
+    "next": "^14.1.0",
     "node.js": "^0.0.1-security",
     "react": "^18",
-    "react-dom": "^18"
+    "react-dom": "^18",
+    "react-router-dom": "^6.22.3"
   },
   "devDependencies": {
     "@types/node": "^20",
