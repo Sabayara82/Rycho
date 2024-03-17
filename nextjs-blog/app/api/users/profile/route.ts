@@ -108,4 +108,70 @@ export async function PUT(request: NextRequest) {
     }
 }
 
+export async function DELETE(request: NextRequest) {
+    try {
+        const reqBody = await request.json();
+
+        // Check if 'action' property exists in the request body
+        if (!reqBody.action) {
+            return NextResponse.json({ error: "Action parameter is missing" }, { status: 400 });
+        }
+
+        // Perform action based on the value of 'action' property
+        if (reqBody.action === 'removeFollowing') {
+            const { userId, followUserId } = reqBody;
+
+            // Continue with removeFollowing logic
+            const user = await User.findById(userId);
+
+            if (!user) {
+                return NextResponse.json({ error: "User not found" }, { status: 404 });
+            }
+
+            // Check if followUserId exists in user's following list
+            const index = user.following.indexOf(followUserId);
+            if (index === -1) {
+                return NextResponse.json({ error: "User is not following this user" }, { status: 400 });
+            }
+
+            // Remove followUserId from user's following list
+            user.following.splice(index, 1);
+            await user.save();
+
+            return NextResponse.json({
+                message: "User is no longer following the user",
+                success: true
+            });
+        } else if (reqBody.action === 'removeFollower') {
+            const { userId, followUserId } = reqBody;
+
+            // Continue with removeFollowing logic
+            const user = await User.findById(userId);
+
+            if (!user) {
+                return NextResponse.json({ error: "User not found" }, { status: 404 });
+            }
+
+            // Check if followUserId exists in user's following list
+            const index = user.followers.indexOf(followUserId);
+            if (index === -1) {
+                return NextResponse.json({ error: "User is not following this user" }, { status: 400 });
+            }
+
+            // Remove followUserId from user's following list
+            user.followers.splice(index, 1);
+            await user.save();
+
+            return NextResponse.json({
+                message: "User is no longer following the user",
+                success: true
+            });
+        } else {
+            return NextResponse.json({ error: "Invalid action" }, { status: 400 });
+        }
+    } catch (error: any) {
+        return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+}
+
 
