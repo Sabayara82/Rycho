@@ -28,7 +28,7 @@ export async function POST(request: NextRequest) {
                 console.log(savedNotif);
         
                 return NextResponse.json({
-                    message: "User created successfully",
+                    message: "Notification created successfully",
                     success: true,
                     savedNotif
                 })
@@ -54,8 +54,10 @@ export async function GET(request: NextRequest) {
                 return NextResponse.json({ error: "User ID parameter is missing" }, { status: 400 });
             }
             // Retrieve notifications based on the user ID
+            console.log('hi');
             const notifications = await Notifications.find({ userId }); 
             return NextResponse.json({ notifications });
+            
         }
     } catch (error: any) {
         return NextResponse.json({ error: error.message }, { status: 500 });

@@ -6,11 +6,11 @@ const NotificationsSchema = new mongoose.Schema({
         required: true,
         unique: true
     },
-    postID: {
+    postId: {
         type: ObjectId,
         required: true
     },
-    userID: {
+    userId: {
         type: ObjectId,
         required: true
     },
@@ -34,5 +34,5 @@ const NotificationsSchema = new mongoose.Schema({
 
 const Notifications = mongoose.models.notifications || mongoose.model("notifications", NotificationsSchema);
 
-export default Notifications;
+export default Notifications;
 
