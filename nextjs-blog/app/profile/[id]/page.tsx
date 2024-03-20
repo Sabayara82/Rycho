@@ -102,8 +102,8 @@ export default function Home({ params }) {
             Profile
         </h1>
         {spotifyId != params.id && (
-          <button className="absolute left-3/4 font-semibold transition duration-500 border-2 border-white-500 hover:border-[#121212] 
-          bg-gradient-to-r from-yellow-400 via-pink-500 to-purple-500 rounded-full mt-10 py-1 px-4 ml-auto">
+          <button className="absolute left-3/4 text-lg font-bebas-neue-regular transition duration-500 border-2 border-white-500 hover:border-[#121212] 
+          bg-gray-700 hover:bg-gray-500 rounded-full mt-10 pt-0.5 px-4 ml-auto">
             {userIsFollowing === 1 ? "Unfollow" : "Follow"}
           </button>
         )}
@@ -117,13 +117,15 @@ export default function Home({ params }) {
             priority
           />
         
-        <h3 className="text-xl font-semibold text-center">{userName || ("")}</h3>
+        <h3 className="text-xl font-semibold text-center mb-2">{userName || ("")}</h3>
         <div className="flex justify-center space-x-4 mb-8">
-          <a href="#" onClick={handleFollowingClick} className="text-sm font-semibold transition duration-500 hover:bg-gray-500 rounded-full py-2.5 px-3">
+          <a href="#" onClick={handleFollowingClick} className="max-h-8 text-lg font-bebas-neue-regular transition duration-500 border-2 border-white-500 hover:border-[#121212] 
+          bg-gray-700 hover:bg-gray-500 rounded-full mt-1 pt-0.5 px-3">
             {followers.length} Followers
           </a>
           <h1 className="py-2">|</h1>
-          <a href="#" onClick={handleFollowingClick} className="text-sm font-semibold transition duration-500 hover:bg-gray-500 rounded-full py-2.5 px-3">
+          <a href="#" onClick={handleFollowingClick} className="max-h-8 text-lg font-bebas-neue-regular transition duration-500 border-2 border-white-500 hover:border-[#121212]
+          bg-gray-700 hover:bg-gray-500 rounded-full mt-1 pt-0.5 px-3">
             {following.length} Following
           </a>
         </div>
