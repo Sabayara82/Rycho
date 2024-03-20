@@ -1,14 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
-import { NextApiRequest, NextApiResponse } from 'next';
 import {connect} from "@/dbConfig/dbConfig";
 import User from "@/models/UserModel";
 
-connect()
 
 export async function POST(request: NextRequest) {
     const req = await request.json()
     if (req.method === 'addUser') {
         try {
+            await connect()
             const { spotifyId, username, followers, following } = req.body;
             const existingUser = await User.findOne({ spotifyId });
 
@@ -169,42 +168,6 @@ export async function DELETE(request: NextRequest) {
     }
 }
 
-// export async function GET(request: NextRequest) {
-//     const req = await request.json()
-//     if (req.method === 'getUsers') {
-//         try {
-//             const { spotifyId, username, followers, following } = req.body;
-//             const existingUser = await User.findOne({ spotifyId });
-
-//             if (existingUser) {
-//                 return NextResponse.json({error: "User already exists"}, {status: 400});
-//             } else {
-//                 const newUser = new User ({
-//                     spotifyId,
-//                     username,
-//                     followers,
-//                     following
-//                 })
-        
-//                 const savedUser = await newUser.save()
-//                 console.log(savedUser);
-        
-//                 return NextResponse.json({
-//                     message: "User created successfully",
-//                     success: true,
-//                     savedUser
-//                 })
-//             }
-//         } catch (error: any) {
-//             return NextResponse.json({error: error.message},
-//                 {status: 500})
-//         }
-//     } else {
-//         return NextResponse.json({error: 'Method Not Allowed'},
-//             {status: 405})
-//     }
-// }
-
 export async function GET(request: NextRequest) {
     try {
         const urlParams = new URLSearchParams(request.url.split("?")[1]);
@@ -231,11 +194,11 @@ export async function GET(request: NextRequest) {
         }
 
         if (action === 'getFollowing') {
-            const following = await User.findOne({ spotifyId: { $in: user.following } });
+            const following = await User.find({ spotifyId: { $in: user.following } });
             return NextResponse.json({ following });
-        } else if (action === 'getFollowers') {
-            const followers = await User.findOne({ spotifyId: { $in: user.followers } });
-            return NextResponse.json({ followers });
+        } else if  (action === 'getFollowers') {
+            const followers = await User.find({ spotifyId: { $in: user.followers } });
+            return NextResponse.json({ followers});
         } else if (action === 'getUserBySpotifyId') {
             return NextResponse.json({ user });
         } else {
@@ -245,4 +208,3 @@ export async function GET(request: NextRequest) {
         return NextResponse.json({ error: error.message }, { status: 500 });
     }
 }
-
