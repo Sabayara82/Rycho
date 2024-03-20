@@ -193,18 +193,18 @@ export async function GET(request: NextRequest) {
             return NextResponse.json({ error: "User not found" }, { status: 404 });
         }
 
-        if (action === 'getFollowing') {
-            const following = await User.find({ spotifyId: { $in: user.following } });
-            return NextResponse.json({ following });
-        } else if  (action === 'getFollowers') {
-            const followers = await User.find({ spotifyId: { $in: user.followers } });
-            return NextResponse.json({ followers});
-        } else if (action === 'getUserBySpotifyId') {
-            return NextResponse.json({ user });
-        } else {
-            return NextResponse.json({ error: "Invalid action" }, { status: 400 });
-        }
-    } catch (error: any) {
-        return NextResponse.json({ error: error.message }, { status: 500 });
-    }
-}
+//         if (action === 'getFollowing') {
+//             const following = await User.find({ _id: { $in: user.following } });
+//             return NextResponse.json({ following });
+//         } else if (action === 'getFollowers') {
+//             const followers = await User.find({ _id: { $in: user.followers } });
+//             return NextResponse.json({ followers });
+//         } else if (action === 'getUserBySpotifyId') {
+//             return NextResponse.json({ user });
+//         } else {
+//             return NextResponse.json({ error: "Invalid action" }, { status: 400 });
+//         }
+//     } catch (error: any) {
+//         return NextResponse.json({ error: error.message }, { status: 500 });
+//     }
+// }
