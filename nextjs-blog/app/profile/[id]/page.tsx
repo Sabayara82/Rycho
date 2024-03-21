@@ -16,6 +16,8 @@ export default function Home({ params }) {
   const [userImage, setUserImage] = useState<string | null>(null);  
   const [userIsFollowing, setUserFollowing] = useState<number>(0);
 
+  const [post, setPost] = useState([]);
+
   useEffect(() => {
     let id = window.localStorage.getItem("spotifyid")
     let storedToken = window.localStorage.getItem("token")    
@@ -94,6 +96,10 @@ export default function Home({ params }) {
     router.push("/followers/" + params.id);
   };
 
+  const handleAddPost = () => {
+    router.push("/feed/post/" + params.id);
+  };
+
 
   return (
     <div className="flex min-h-screen flex-col bg-[#121212] mt-20 max-w-7xl min-h-96 mx-auto rounded-3xl p-10">
@@ -130,7 +136,7 @@ export default function Home({ params }) {
           </a>
         </div>
         {spotifyId == params.id && (
-          <button className="font-semibold mx-auto max-w-fit transition duration-500 border-2 border-white-500 hover:border-[#121212] bg-gradient-to-r from-yellow-400 via-pink-500 to-purple-500 rounded-full py-2 px-6 mb-4 mt-2">
+          <button onClick={handleAddPost} className="font-semibold mx-auto max-w-fit transition duration-500 border-2 border-white-500 hover:border-[#121212] bg-gradient-to-r from-yellow-400 via-pink-500 to-purple-500 rounded-full py-2 px-6 mb-4 mt-2">
             Create Post
           </button>
         )}

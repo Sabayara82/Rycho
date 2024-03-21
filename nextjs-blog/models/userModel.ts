@@ -19,6 +19,7 @@ const userSchema = new mongoose.Schema({
     }
 });
 
-const User = mongoose.models.users || mongoose.model("users", userSchema);
+const connection = mongoose.createConnection(process.env.MONGO_URI!+'users');
+const User = connection.models.users || connection.model("users", userSchema);
 
-export default User;
+export default User;

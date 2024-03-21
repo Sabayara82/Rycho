@@ -7,7 +7,7 @@ export async function POST(request: NextRequest) {
     const req = await request.json()
     if (req.method === 'addUser') {
         try {
-            await connect()
+            await connect('users')
             const { spotifyId, username, followers, following } = req.body;
             const existingUser = await User.findOne({ spotifyId });
 
