@@ -1,17 +1,12 @@
 import mongoose from "mongoose";
 
 const NotificationsSchema = new mongoose.Schema({
-    Id: {
-        type: ObjectId,
-        required: true,
-        unique: true
-    },
     postId: {
-        type: ObjectId,
+        type: String,
         required: true
     },
     userId: {
-        type: ObjectId,
+        type: String,
         required: true
     },
     Type: {
@@ -19,7 +14,7 @@ const NotificationsSchema = new mongoose.Schema({
         required: true
     },
     FromUserId: {
-        type: ObjectId,
+        type: String,
         required: true
     },
     Text: {

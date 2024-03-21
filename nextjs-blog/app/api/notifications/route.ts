@@ -2,38 +2,32 @@ import { NextRequest, NextResponse } from "next/server";
 import {connect} from "@/dbConfig/dbConficNot";
 import Notifications from "@/models/notificationsModel";
 
-connect()
+
 
 export async function POST(request: NextRequest) {
-    const req = await request.json()
-    if (req.method === 'addNotif') {
-        try {
-            const { Id, postID, userID, Type, FromUserId, Text, Time } = req.body;
-            const existingNotif = await Notifications.findOne({ Id });
+    const { method, postId, userId, Type, FromUserId, Text, Time } = await request.json();
 
-            if (existingNotif) {
-                return NextResponse.json({error: "Notification already exists"}, {status: 400});
-            } else {
-                const newNotif= new Notifications ({
-                    Id, 
-                    postID, 
-                    userID, 
-                    Type, 
-                    FromUserId, 
-                    Text, 
-                    Time
-                })
-        
-                const savedNotif= await newNotif.save()
-                console.log(savedNotif);
-        
-                return NextResponse.json({
-                    message: "Notification created successfully",
-                    success: true,
-                    savedNotif
-                })
-            }
-        } catch (error: any) {
+    if (method === 'addNotif') {
+        try {
+            await connect()
+            const newNotif= new Notifications ({
+                postId, 
+                userId, 
+                Type, 
+                FromUserId, 
+                Text, 
+                Time
+            });
+    
+            const savedNotif= await newNotif.save()
+            console.log(savedNotif);
+    
+            return NextResponse.json({
+                message: "Notification created successfully",
+                success: true,
+                savedNotif
+            })
+            }catch (error: any) {
             return NextResponse.json({error: error.message},
                 {status: 500})
         }
@@ -44,7 +38,9 @@ export async function POST(request: NextRequest) {
 }
 
 export async function GET(request: NextRequest) {
+
     try {
+        await connect()
         const urlParams = new URLSearchParams(request.url.split("?")[1]);
         const action = urlParams.get("action");
         const userId = urlParams.get("userId");
@@ -54,7 +50,7 @@ export async function GET(request: NextRequest) {
                 return NextResponse.json({ error: "User ID parameter is missing" }, { status: 400 });
             }
             // Retrieve notifications based on the user ID
-            console.log('hi');
+
             const notifications = await Notifications.find({ userId }); 
             return NextResponse.json({ notifications });
             
