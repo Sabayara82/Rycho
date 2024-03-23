@@ -8,7 +8,7 @@ export async function POST(request: NextRequest) {
     if (req.method === 'addUser') {
         try {
             await connect('users')
-            const { spotifyId, username, followers, following } = req.body;
+            const { spotifyId, username, followers, following } = req;
             const existingUser = await User.findOne({ spotifyId });
 
             if (existingUser) {

@@ -3,18 +3,18 @@
 import axios from "axios";
 import Link from "next/link";
 import Image from 'next/image';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {useRouter} from "next/navigation";
 
 
-export default function page() {
+export default function LoginPage() {
     const CLIENT_ID = "f9010a7f16bd4939a67261cce4b5cc6f"
     const REDIRECT_URI = "http://localhost:3000/login"
     const AUTH_ENDPOINT = "https://accounts.spotify.com/authorize"
     const RESPONSE_TYPE = "token"
 
     const router = useRouter();
-    const [user, setUser] = React.useState({
+    const [user, setUser] = useState({
       spotifyId: "",
       username: "",
       followers: [],

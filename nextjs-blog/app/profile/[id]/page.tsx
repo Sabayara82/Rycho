@@ -4,8 +4,9 @@ import axios from "axios";
 import Image from "next/image";
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
+import RecentPosts from "./recentPosts";
 
-export default function Home({ params }) {
+export default function Home({params} : {params: {id: string}}) {
 
   const router = useRouter();  
   const [followers, setFollowers] = useState([]);
@@ -15,8 +16,6 @@ export default function Home({ params }) {
   const [userName, setUserName] = useState<string | null>(null);
   const [userImage, setUserImage] = useState<string | null>(null);  
   const [userIsFollowing, setUserFollowing] = useState<number>(0);
-
-  const [post, setPost] = useState([]);
 
   useEffect(() => {
     let id = window.localStorage.getItem("spotifyid")
@@ -141,9 +140,9 @@ export default function Home({ params }) {
           </button>
         )}
         <div className="mx-auto w-4/6">
-          <h3 className="text-2xl font-semibold pb-4">Recent Posts</h3>
+          <h3 className="text-2xl font-semibold pb-4"> Recent Posts </h3>
           <div className="bg-[#000000] min-h-96 rounded-2xl">
-            <h3 className="text-center pt-40">No posts available</h3>
+            <RecentPosts params={{ id: spotifyId  , token: token}} />
           </div>
         </div>
         <div className="fixed bottom-0 left-0 right-0 h-20 bg-gradient-to-b from-transparent to-black"></div>
