@@ -24,44 +24,43 @@ export default function PostPage({ params }: { params: { id: string } }) {
 
   const fetchSongs = async () => {
     try {
-      const { data } = await axios.get('https://api.spotify.com/v1/me/top/tracks', {
+      const { data } = await axios.get('https://api.spotify.com/v1/me/playlists', {
         headers: {
           Authorization: 'Bearer ' + token
         }
       });
-
-      // Extract relevant song information
-      const extractedSongs = data.items.map((item: any) => {
+  
+      // Extract relevant playlist information
+      const extractedPlaylists = data.items.map((item: any) => {
         return {
           name: item.name,
-          artist: item.artists[0].name,
-          album: item.album.name,
-          image: item.album.images.length > 0 ? item.album.images[0].url : null
+          description: item.description,
+          // Add more fields as needed
         };
       });
-
-      // Set the fetched songs
-      setSongs(extractedSongs);
+  
+      // Set the fetched playlists
+      setSongs(extractedPlaylists);
     } catch (error) {
-      console.error("Error fetching songs: ", error);
+      console.error("Error fetching playlists: ", error);
     }
   }
+  
 
   return (
     <div>
-      <h1>Top Songs</h1>
+      <h1>My Playlists</h1>
       <ul>
-        {songs.map((song, index) => (
+        {songs.map((playlist, index) => (
           <li key={index}>
             <div>
-              <h2>{song.name}</h2>
-              <p>{song.artist}</p>
-              <p>{song.album}</p>
-              {song.image && <img src={song.image} alt="Album Art" />}
+              <h2>{playlist.name}</h2>
+              <p>{playlist.description}</p>
             </div>
           </li>
         ))}
       </ul>
     </div>
   );
+  
 }
