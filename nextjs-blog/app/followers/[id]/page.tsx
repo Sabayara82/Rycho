@@ -1,7 +1,6 @@
 "use client";
 
 import axios from "axios";
-import Image from 'next/image';
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -15,23 +14,24 @@ interface User {
 
 export default function FollowingPage({ params }) {
     const router = useRouter();
-    const [followingList, setFollowingList] = useState<User[]>([]);
+    const [followerList, setfollowerList] = useState<User[]>([]);
 
     useEffect(() => {
-        fetchFollowingList();
+        fetchfollowerList();
     }, []);
 
     useEffect(() => {
-        if (followingList.length > 0) {
+        if (followerList.length >= 0) {
             fetchUserProfile();
         }
-    }, [followingList]);
+    }, [followerList]);
 
-    const fetchFollowingList = async () => {
+    const fetchfollowerList = async () => {
         try {
-            const response = await axios.get(`http://localhost:3000/api/users/profile?action=getFollowing&spotifyId=${params.id}`);
-            const { following } = response.data;
-            setFollowingList(following);
+            const response = await axios.get(`http://localhost:3000/api/users/profile?action=getFollowers&spotifyId=${params.id}`);
+            const { followers } = response.data;
+            setfollowerList(followers);
+            console.log("Test")
         } catch (error) {
             console.error("Error fetching following list: ", error);
         }
@@ -40,7 +40,7 @@ export default function FollowingPage({ params }) {
     const fetchUserProfile = async () => {
         const token = window.localStorage.getItem("token");
         try {
-            const promises = followingList.map(async (user) => {
+            const promises = followerList.map(async (user) => {
                 const { data } = await axios.get(`https://api.spotify.com/v1/users/${user.spotifyId}`, {
                     headers: {
                         Authorization: 'Bearer ' + token
@@ -51,8 +51,8 @@ export default function FollowingPage({ params }) {
                     image: data.images && data.images.length > 0 ? data.images[1].url : "/user.png"
                 };
             });
-            const updatedFollowingList = await Promise.all(promises);
-            setFollowingList(updatedFollowingList);
+            const updatedfollowerList = await Promise.all(promises);
+            setfollowerList(updatedfollowerList);
         } catch (error) {
             console.error("Error fetching user profiles: ", error);
         }
@@ -64,9 +64,9 @@ export default function FollowingPage({ params }) {
 
     return (
         <div className="container mx-auto mt-8 px-4">
-            <h1 className="text-4xl font-semibold mb-8 text-center">Following</h1>
+            <h1 className="text-4xl font-semibold mb-8 text-center">Followers</h1>
             <div className="flex flex-col items-center">
-                {followingList.map((user) => (
+                {followerList.map((user) => (
                     <div key={user.spotifyId} className="flex items-center py-4 px-6 border-b border-gray-200 w-full max-w-xl">
                         <img
                             src={user.image || "/user.png"}

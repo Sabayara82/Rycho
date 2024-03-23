@@ -52,7 +52,7 @@ const Nav = () => {
     getUsersList()
 
     return (
-        <nav className="bg-[#202020] flex justify-between items-center w-full pt-1 pb-2">
+        <nav className="bg-[#FFFFFF] flex justify-between items-center w-full pt-1 pb-2">
             <a href={token ? '/profile' : '/login'} className="flex gap-2 flex-center pl-5 pt-2 ml-4 max-w-fit">
                 <Image className="bg-[#ffffff] rounded-full object-contain max-h-8"
                     src="/user.png"

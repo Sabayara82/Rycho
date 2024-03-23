@@ -84,12 +84,54 @@ export default function Home({ params }) {
     }
   }
 
-  // Function to redirect to the following page
+
+  const handleFollowButtonClick = async () => {
+    try {
+      if (userIsFollowing === 1) {
+        await axios.delete(`http://localhost:3000/api/users/profile`, {
+          data: {
+            action: 'removeFollowing',
+            spotifyId: spotifyId,
+            followUserId: params.id 
+          }
+        });
+
+        await axios.delete(`http://localhost:3000/api/users/profile`, {
+          data: {
+            action: 'removeFollower',
+            spotifyId: params.id, 
+            followUserId: spotifyId 
+          }
+        });
+  
+        setUserFollowing(0); 
+      } else {
+  
+        await axios.put(`http://localhost:3000/api/users/profile`, {
+          action: 'addFollowing',
+          spotifyId: spotifyId,
+          followUserId: params.id 
+        });
+  
+        await axios.put(`http://localhost:3000/api/users/profile`, {
+          action: 'addFollower',
+          spotifyId: params.id, 
+          followUserId: spotifyId 
+        });
+  
+        setUserFollowing(1); 
+      }
+    } catch (error) {
+      console.error("Error handling follow/unfollow action: ", error);
+    }
+  };
+  
+
+
   const handleFollowingClick = () => {
     router.push("/following/" + params.id);
   };
 
-  // Function to redirect to the followers page
   const handleFollowersClick = () => {
     router.push("/followers/" + params.id);
   };
@@ -98,14 +140,18 @@ export default function Home({ params }) {
   return (
     <div className="flex min-h-screen flex-col bg-[#121212] mt-20 max-w-7xl min-h-96 mx-auto rounded-3xl p-10">
       <div className="flex justify-between items-center mb-8">
-        <h1 className="absolute left-1/2 -translate-x-1/2 text-4xl font-semibold pt-12">
+        <h1 className="absolute left-1/2 -translate-x-1/2 text-4xl font-semibold pt-12 text-white">
             Profile
         </h1>
         {spotifyId != params.id && (
-          <button className="absolute left-3/4 text-lg font-bebas-neue-regular transition duration-500 border-2 border-white-500 hover:border-[#121212] 
-          bg-gray-700 hover:bg-gray-500 rounded-full mt-10 pt-0.5 px-4 ml-auto">
-            {userIsFollowing === 1 ? "Unfollow" : "Follow"}
-          </button>
+          <button 
+          className="absolute left-3/4 text-lg font-bebas-neue-regular transition duration-500 border-2 border-white-500 hover:border-[#121212] 
+          bg-gray-700 hover:bg-gray-500 rounded-full mt-10 pt-0.5 px-4 ml-auto text-white"
+          onClick={handleFollowButtonClick}
+        >
+          {userIsFollowing === 1 ? "Unfollow" : "Follow"}
+        </button>
+        
         )}
         
     </div>
@@ -117,15 +163,15 @@ export default function Home({ params }) {
             priority
           />
         
-        <h3 className="text-xl font-semibold text-center mb-2">{userName || ("")}</h3>
+        <h3 className="text-xl font-semibold text-center mb-2 text-white">{userName || ("")}</h3>
         <div className="flex justify-center space-x-4 mb-8">
-          <a href="#" onClick={handleFollowingClick} className="max-h-8 text-lg font-bebas-neue-regular transition duration-500 border-2 border-white-500 hover:border-[#121212] 
-          bg-gray-700 hover:bg-gray-500 rounded-full mt-1 pt-0.5 px-3">
+          <a href="#" onClick={handleFollowersClick} className="max-h-8 text-lg font-bebas-neue-regular transition duration-500 border-2 border-white-500 hover:border-[#121212] 
+          bg-gray-700 hover:bg-gray-500 rounded-full mt-1 pt-0.5 px-3 text-white">
             {followers.length} Followers
           </a>
-          <h1 className="py-2">|</h1>
+          <h1 className="py-2 text-white">|</h1>
           <a href="#" onClick={handleFollowingClick} className="max-h-8 text-lg font-bebas-neue-regular transition duration-500 border-2 border-white-500 hover:border-[#121212]
-          bg-gray-700 hover:bg-gray-500 rounded-full mt-1 pt-0.5 px-3">
+          bg-gray-700 hover:bg-gray-500 rounded-full mt-1 pt-0.5 px-3 text-white">
             {following.length} Following
           </a>
         </div>
@@ -135,9 +181,9 @@ export default function Home({ params }) {
           </button>
         )}
         <div className="mx-auto w-4/6">
-          <h3 className="text-2xl font-semibold pb-4">Recent Posts</h3>
-          <div className="bg-[#000000] min-h-96 rounded-2xl">
-            <h3 className="text-center pt-40">No posts available</h3>
+          <h3 className="text-2xl font-semibold pb-4 text-white">Recent Posts</h3>
+          <div className="bg-[#FFFFFF] min-h-96 rounded-2xl">
+            <h3 className="text-center pt-40 text-black">No posts available</h3>
           </div>
         </div>
         <div className="fixed bottom-0 left-0 right-0 h-20 bg-gradient-to-b from-transparent to-black"></div>
