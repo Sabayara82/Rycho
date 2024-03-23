@@ -1,11 +1,20 @@
 // pages/feed/post/[id]/page.tsx
 
+"use client";
+
 import axios from "axios";
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+
+interface Song {
+  name: string[];
+  description: string[];
+}
 
 export default function PostPage({ params }: { params: { id: string } }) {
   const [token, setToken] = useState<string | null>(null);
-  const [songs, setSongs] = useState<any[]>([]); 
+  const [playlistSongs, setPlaylistSongs] = useState<Song[]>([]); 
+  const router = useRouter();
 
   useEffect(() => {
     fetchToken();
@@ -13,7 +22,7 @@ export default function PostPage({ params }: { params: { id: string } }) {
 
   useEffect(() => {
     if (token) {
-      fetchSongs();
+      fetchPlaylistSongs();
     }
   }, [token]);
 
@@ -22,11 +31,12 @@ export default function PostPage({ params }: { params: { id: string } }) {
     setToken(storedToken);
   }
 
-  const fetchSongs = async () => {
+  const fetchPlaylistSongs = async () => {
+    const storedToken = window.localStorage.getItem("token");
     try {
       const { data } = await axios.get('https://api.spotify.com/v1/me/playlists', {
         headers: {
-          Authorization: 'Bearer ' + token
+          Authorization: 'Bearer ' + storedToken // Use storedToken instead of token
         }
       });
   
@@ -35,23 +45,22 @@ export default function PostPage({ params }: { params: { id: string } }) {
         return {
           name: item.name,
           description: item.description,
-          // Add more fields as needed
         };
       });
   
       // Set the fetched playlists
-      setSongs(extractedPlaylists);
+      setPlaylistSongs(extractedPlaylists); // Changed to setPlaylistSongs
     } catch (error) {
       console.error("Error fetching playlists: ", error);
     }
   }
-  
 
   return (
     <div>
       <h1>My Playlists</h1>
+      {/* Display playlist information */}
       <ul>
-        {songs.map((playlist, index) => (
+        {playlistSongs.map((playlist, index) => (
           <li key={index}>
             <div>
               <h2>{playlist.name}</h2>
@@ -62,5 +71,4 @@ export default function PostPage({ params }: { params: { id: string } }) {
       </ul>
     </div>
   );
-  
 }
