@@ -24,7 +24,7 @@ const postItemSchema = new mongoose.Schema({
         type: Boolean
     },
     comments: {
-        type: [Number],
+        type: [String],
         default: []
     }
 }, {

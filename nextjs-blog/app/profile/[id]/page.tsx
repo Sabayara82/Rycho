@@ -5,6 +5,7 @@ import Image from "next/image";
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import RecentPosts from "./recentPosts";
+import backgroundImg from "../../../public/background.png";
 
 export default function Home({params} : {params: {id: string}}) {
 
@@ -101,7 +102,7 @@ export default function Home({params} : {params: {id: string}}) {
 
 
   return (
-    <div className="flex min-h-screen flex-col bg-[#121212] mt-20 max-w-7xl min-h-96 mx-auto rounded-3xl p-10">
+    <div className="flex min-h-screen flex-col bg-red-950  mt-20 max-w-7xl min-h-96 mx-auto rounded-3xl p-10" style={{ backgroundImage: `url(${backgroundImg})`, backgroundSize: 'cover' }}>
       <div className="flex justify-between items-center mb-8">
         <h1 className="absolute left-1/2 -translate-x-1/2 text-4xl font-semibold pt-12">
             Profile
