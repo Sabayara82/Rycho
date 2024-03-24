@@ -1,14 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import {connect} from "@/dbConfig/dbConfig";
-import User from "@/models/UserModel";
+import User from "@/models/userModel";
 
-connect()
 
 export async function POST(request: NextRequest) {
     const req = await request.json()
     if (req.method === 'addUser') {
         try {
-            const { spotifyId, username, followers, following } = req.body;
+            await connect('users')
+            const { spotifyId, username, followers, following } = req;
             const existingUser = await User.findOne({ spotifyId });
 
             if (existingUser) {
@@ -40,6 +40,7 @@ export async function POST(request: NextRequest) {
     }
 }
 
+
 export async function PUT(request: NextRequest) {
     try {
         const reqBody = await request.json();
@@ -49,15 +50,14 @@ export async function PUT(request: NextRequest) {
         }
 
         if (reqBody.action === 'addFollowing') {
-            const { userId, followUserId } = reqBody;
-
-            const user = await User.findById(userId);
+            const { spotifyId, followUserId } = reqBody;
+            const user = await User.findOne({ spotifyId });
 
             if (!user) {
                 return NextResponse.json({ error: "User not found" }, { status: 404 });
             }
 
-            const followUser = await User.findById(followUserId);
+            const followUser = await User.findOne({ spotifyId: followUserId });
 
             if (!followUser) {
                 return NextResponse.json({ error: "User to follow not found" }, { status: 404 });
@@ -75,15 +75,15 @@ export async function PUT(request: NextRequest) {
                 success: true
             });
         } else if (reqBody.action === 'addFollower') {
-                const { userId, followUserId } = reqBody;
+                const { spotifyId, followUserId } = reqBody;
 
-                const user = await User.findById(userId);
+                const user = await User.findOne({ spotifyId });
 
                 if (!user) {
                     return NextResponse.json({ error: "User not found" }, { status: 404 });
                 }
 
-                const followUser = await User.findById(followUserId);
+                const followUser = await User.findOne({ spotifyId: followUserId });
 
                 if (!followUser) {
                     return NextResponse.json({ error: "User to follow not found" }, { status: 404 });
@@ -108,6 +108,8 @@ export async function PUT(request: NextRequest) {
     }
 }
 
+
+
 export async function DELETE(request: NextRequest) {
     try {
         const reqBody = await request.json();
@@ -117,9 +119,9 @@ export async function DELETE(request: NextRequest) {
         }
 
         if (reqBody.action === 'removeFollowing') {
-            const { userId, followUserId } = reqBody;
+            const { spotifyId, followUserId } = reqBody;
 
-            const user = await User.findById(userId);
+            const user = await User.findOne({ spotifyId });
 
             if (!user) {
                 return NextResponse.json({ error: "User not found" }, { status: 404 });
@@ -138,9 +140,9 @@ export async function DELETE(request: NextRequest) {
                 success: true
             });
         } else if (reqBody.action === 'removeFollower') {
-            const { userId, followUserId } = reqBody;
+            const { spotifyId, followUserId } = reqBody;
 
-            const user = await User.findById(userId);
+            const user = await User.findOne({ spotifyId });
 
             if (!user) {
                 return NextResponse.json({ error: "User not found" }, { status: 404 });
@@ -166,77 +168,43 @@ export async function DELETE(request: NextRequest) {
     }
 }
 
-// export async function GET(request: NextRequest) {
-//     const req = await request.json()
-//     if (req.method === 'getUsers') {
-//         try {
-//             const { spotifyId, username, followers, following } = req.body;
-//             const existingUser = await User.findOne({ spotifyId });
+export async function GET(request: NextRequest) {
+    try {
+        const urlParams = new URLSearchParams(request.url.split("?")[1]);
+        const action = urlParams.get("action");
+        const spotifyId = urlParams.get("spotifyId");
 
-//             if (existingUser) {
-//                 return NextResponse.json({error: "User already exists"}, {status: 400});
-//             } else {
-//                 const newUser = new User ({
-//                     spotifyId,
-//                     username,
-//                     followers,
-//                     following
-//                 })
-        
-//                 const savedUser = await newUser.save()
-//                 console.log(savedUser);
-        
-//                 return NextResponse.json({
-//                     message: "User created successfully",
-//                     success: true,
-//                     savedUser
-//                 })
-//             }
-//         } catch (error: any) {
-//             return NextResponse.json({error: error.message},
-//                 {status: 500})
-//         }
-//     } else {
-//         return NextResponse.json({error: 'Method Not Allowed'},
-//             {status: 405})
-//     }
-// }
+        if (action === 'getAllUsers') {
+            const allUsers = await User.find({}, 'username spotifyId');
+            return NextResponse.json({ allUsers });
+        }
 
-// export async function GET(request: NextRequest) {
-//     try {
-//         const urlParams = new URLSearchParams(request.url.split("?")[1]);
-//         const action = urlParams.get("action");
-//         const userId = urlParams.get("userId");
-//         const spotifyId = urlParams.get("spotifyId");
+        if (!spotifyId) {
+            return NextResponse.json({ error: "User ID or Spotify ID parameter is missing" }, { status: 400 });
+        }
 
-//         if (!userId && !spotifyId) {
-//             return NextResponse.json({ error: "User ID or Spotify ID parameter is missing" }, { status: 400 });
-//         }
+        let user;
 
-//         let user;
+        if (spotifyId) {
+            user = await User.findOne({ spotifyId });
+        }
 
-//         if (userId) {
-//             user = await User.findById(userId);
-//         } else if (spotifyId) {
-//             user = await User.findOne({ spotifyId });
-//         }
+        if (!user) {
+            return NextResponse.json({ error: "User not found" }, { status: 404 });
+        }
 
-//         if (!user) {
-//             return NextResponse.json({ error: "User not found" }, { status: 404 });
-//         }
-
-//         if (action === 'getFollowing') {
-//             const following = await User.find({ _id: { $in: user.following } });
-//             return NextResponse.json({ following });
-//         } else if (action === 'getFollowers') {
-//             const followers = await User.find({ _id: { $in: user.followers } });
-//             return NextResponse.json({ followers });
-//         } else if (action === 'getUserBySpotifyId') {
-//             return NextResponse.json({ user });
-//         } else {
-//             return NextResponse.json({ error: "Invalid action" }, { status: 400 });
-//         }
-//     } catch (error: any) {
-//         return NextResponse.json({ error: error.message }, { status: 500 });
-//     }
-// }
+        if (action === 'getFollowing') {
+            const following = await User.find({ spotifyId: { $in: user.following } });
+            return NextResponse.json({ following });
+        } else if  (action === 'getFollowers') {
+            const followers = await User.find({ spotifyId: { $in: user.followers } });
+            return NextResponse.json({ followers});
+        } else if (action === 'getUserBySpotifyId') {
+            return NextResponse.json({ user });
+        } else {
+            return NextResponse.json({ error: "Invalid action" }, { status: 400 });
+        }
+    } catch (error: any) {
+        return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+}

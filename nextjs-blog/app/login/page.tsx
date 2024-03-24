@@ -3,18 +3,20 @@
 import axios from "axios";
 import Link from "next/link";
 import Image from 'next/image';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {useRouter} from "next/navigation";
 
 
-export default function page() {
+export default function LoginPage() {
     const CLIENT_ID = "f9010a7f16bd4939a67261cce4b5cc6f"
+    const SCOPE = encodeURIComponent("user-library-read user-top-read playlist-read-private");
     const REDIRECT_URI = "http://localhost:3000/login"
     const AUTH_ENDPOINT = "https://accounts.spotify.com/authorize"
+
     const RESPONSE_TYPE = "token"
 
     const router = useRouter();
-    const [user, setUser] = React.useState({
+    const [user, setUser] = useState({
       spotifyId: "",
       username: "",
       followers: [],
@@ -45,6 +47,7 @@ export default function page() {
         }
       })
       setUser({...user, spotifyId: data.id, username: data.display_name})
+      window.localStorage.setItem("spotifyid", data.id)
       router.push("/profile/" + data.id)
     }
 
@@ -63,7 +66,7 @@ export default function page() {
 
     return (
       <div className="flex flex-col items-center justify-center bg-[#202020] max-w-96 min-h-fit mx-auto rounded-3xl mt-52">
-        <h1 className="text-3xl font-semibold text-center mb-8 mt-10">Login with Spotify</h1>
+        <h1 className="text-3xl font-semibold text-center text-white mb-8 mt-10">Login with Spotify</h1>
         <Image className="rounded-full object-contain"
           src="/spotify.png"
           alt="image not found"
@@ -71,9 +74,9 @@ export default function page() {
           height={30} 
         />
         <a
-          href={`${AUTH_ENDPOINT}?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=${RESPONSE_TYPE}`}
+          href={`${AUTH_ENDPOINT}?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=${RESPONSE_TYPE}&scope=${SCOPE}`}
           className="p-1.5 px-10 transition duration-500 border-2 border-white-500 hover:border-[#202020] rounded-lg my-10 bg-gradient-to-br from-yellow-400 via-pink-500 to-purple-500"
-        >
+         >
           Login
         </a>
       </div>
