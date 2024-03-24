@@ -1,7 +1,7 @@
 "use client";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 
 interface Song {
   name: string;
@@ -23,6 +23,7 @@ interface User {
 }
 
 export default function PostPage({ params }: { params: { id: string } }) {
+  const router = useRouter();
   const [token, setToken] = useState<string | null>(null);
   const [playlists, setPlaylists] = useState<Playlist[]>([]);
   const [playlistSongs, setPlaylistSongs] = useState<Song[]>([]);
@@ -172,7 +173,7 @@ export default function PostPage({ params }: { params: { id: string } }) {
           audioURL: selectedSong.audioUrl, 
           caption: "", 
           likes: 0,
-          roomStat: true,
+          roomStat: false,
           comments: [],
         });
 
@@ -183,6 +184,7 @@ export default function PostPage({ params }: { params: { id: string } }) {
     } else {
       console.warn("No song selected to post.");
     }
+    router.push(`/profile/${spotifyId}`);
   };
   
 

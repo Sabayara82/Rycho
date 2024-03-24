@@ -197,7 +197,7 @@ export default function Home({ params }: { params: { id: string } }) {
           </a>
         </div>
         {spotifyId == params.id && (
-          <button className="font-semibold mx-auto max-w-fit transition duration-500 border-2 border-white-500 hover:border-[#121212] bg-gradient-to-r from-yellow-400 via-pink-500 to-purple-500 rounded-full py-2 px-6 mb-4 mt-2">
+          <button onClick={handleAddPost} className="font-semibold mx-auto max-w-fit transition duration-500 border-2 border-white-500 hover:border-[#121212] bg-gradient-to-r from-yellow-400 via-pink-500 to-purple-500 rounded-full py-2 px-6 mb-4 mt-2">
             Create Post
           </button>
         )}
