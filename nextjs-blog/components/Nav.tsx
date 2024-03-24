@@ -65,13 +65,13 @@ const Nav = () => {
         href={token ? "/feed" : "/login"}
         className="flex gap-2 flex-center pt-2 ml-4 max-w-fit"
       >
-        <Image
+        {/* <Image
           className="bg-[#ffffff] rounded-full object-contain max-h-8"
           src="/user.png"
           alt="image not found"
           width={30}
           height={30}
-        />
+        /> */}
         <p className="font-bebas-neue-regular text-4xl">Rycho</p>
       </a>
       {token && (
