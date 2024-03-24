@@ -5,14 +5,20 @@ const postItemSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    songName: {
+        type: String 
+    }, 
     albumName: {
         type: String
     },
-    albumURL: {
+    artistName: {
+        type: String 
+    },
+    imageURL: {
         type: String
     },
-    songName: {
-        type: String 
+    audioURL: {
+        type: String
     },
     caption: {
         type: String
