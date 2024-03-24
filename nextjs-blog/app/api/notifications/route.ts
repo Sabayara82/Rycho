@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import {connect} from "@/dbConfig/dbConficNot";
 import Notifications from "@/models/notificationsModel";
+import {notificationpage} from "../../notificationpage/notificationpage"
 
 
 
@@ -21,12 +22,13 @@ export async function POST(request: NextRequest) {
     
             const savedNotif= await newNotif.save()
             console.log(savedNotif);
-    
+            notificationpage(savedNotif);
             return NextResponse.json({
                 message: "Notification created successfully",
                 success: true,
                 savedNotif
-            })
+            },
+            )
             }catch (error: any) {
             return NextResponse.json({error: error.message},
                 {status: 500})
