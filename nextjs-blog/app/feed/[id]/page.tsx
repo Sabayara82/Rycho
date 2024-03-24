@@ -1,17 +1,11 @@
 "use client"
 
 import axios from "axios";
-import Image from "next/image";
-import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 
-export default function Feed({params} : {params: {id: string}}) {
-
-    const router = useRouter();  
+export default function Feed({params} : {params: {id: string}}) {  
     const [token, setToken] = useState<string | null>(null);
-    const [spotifyId, setId] = useState<string | null>(null);
-    const [userName, setUserName] = useState<string | null>(null);
-    const [userImage, setUserImage] = useState<string | null>(null);  
+    const [spotifyId, setId] = useState<string | null>(null); 
     const [followingIds, setFollowingIds] = useState<string[]>([]);
     const [posts, setPosts] = useState<any[]>([]);
 
@@ -39,12 +33,10 @@ export default function Feed({params} : {params: {id: string}}) {
 
         //you loop through every index and get the spotifyID
         for(let x = 0; x < following.length; x++){
-          console.log(following[x].spotifyId)
           newFollowingIds.push(following[x].spotifyId)
         } 
 
         setFollowingIds(newFollowingIds)
-        console.log(followingIds)
       } catch (error) {
         console.error("Error fetching followers count: ", error);
       }
@@ -63,15 +55,16 @@ export default function Feed({params} : {params: {id: string}}) {
             }
           );
           const { allPosts } = response.data;
-          console.log(posts)
           allOfThePosts.push(...allPosts);
         }
         catch(error){
           console.error("Error fetching user's posts': ", error);
         }
       }
+  
+      const sortedPosts = allOfThePosts.sort((a, b) => b.updatedAt - a.updatedAt);
       
-      setPosts(allOfThePosts);
+      setPosts(sortedPosts);
     }
   
       return (
