@@ -138,14 +138,14 @@ export default function Home({ params }) {
 
 
   return (
-    <div className="flex min-h-screen flex-col bg-[#121212] mt-20 max-w-7xl min-h-96 mx-auto rounded-3xl p-10">
+    <div className="flex min-h-screen flex-col bg-[#202020] mt-20 max-w-7xl min-h-96 mx-auto rounded-3xl p-10">
       <div className="flex justify-between items-center mb-8">
         <h1 className="absolute left-1/2 -translate-x-1/2 text-4xl font-semibold pt-12 text-white">
             Profile
         </h1>
         {spotifyId != params.id && (
           <button 
-          className="absolute left-3/4 text-lg font-bebas-neue-regular transition duration-500 border-2 border-white-500 hover:border-[#121212] 
+          className="absolute left-3/4 text-lg font-bebas-neue-regular transition duration-500 border-2 border-white-500 hover:border-[#202020] 
           bg-gray-700 hover:bg-gray-500 rounded-full mt-10 pt-0.5 px-4 ml-auto text-white"
           onClick={handleFollowButtonClick}
         >
@@ -155,7 +155,7 @@ export default function Home({ params }) {
         )}
         
     </div>
-        <Image className="bg-[#ffffff] mx-auto rounded-full mt-10 mb-3"
+        <Image className="bg-[#ffffff] mx-auto rounded-full mt-10 mb-3 max-h-32"
             src={userImage || "/user.png"}
             alt="image not found"
             width={128} 
@@ -165,24 +165,24 @@ export default function Home({ params }) {
         
         <h3 className="text-xl font-semibold text-center mb-2 text-white">{userName || ("")}</h3>
         <div className="flex justify-center space-x-4 mb-8">
-          <a href="#" onClick={handleFollowersClick} className="max-h-8 text-lg font-bebas-neue-regular transition duration-500 border-2 border-white-500 hover:border-[#121212] 
+          <a href="#" onClick={handleFollowersClick} className="max-h-8 text-lg font-bebas-neue-regular transition duration-500 border-2 border-white-500 hover:border-[#202020] 
           bg-gray-700 hover:bg-gray-500 rounded-full mt-1 pt-0.5 px-3 text-white">
             {followers.length} Followers
           </a>
           <h1 className="py-2 text-white">|</h1>
-          <a href="#" onClick={handleFollowingClick} className="max-h-8 text-lg font-bebas-neue-regular transition duration-500 border-2 border-white-500 hover:border-[#121212]
+          <a href="#" onClick={handleFollowingClick} className="max-h-8 text-lg font-bebas-neue-regular transition duration-500 border-2 border-white-500 hover:border-[#202020]
           bg-gray-700 hover:bg-gray-500 rounded-full mt-1 pt-0.5 px-3 text-white">
             {following.length} Following
           </a>
         </div>
         {spotifyId == params.id && (
-          <button className="font-semibold mx-auto max-w-fit transition duration-500 border-2 border-white-500 hover:border-[#121212] bg-gradient-to-r from-yellow-400 via-pink-500 to-purple-500 rounded-full py-2 px-6 mb-4 mt-2">
+          <button className="font-semibold mx-auto max-w-fit transition duration-500 border-2 border-white-500 hover:border-[#202020] bg-gradient-to-r from-yellow-400 via-pink-500 to-purple-500 rounded-full py-2 px-6 mb-4 mt-2">
             Create Post
           </button>
         )}
         <div className="mx-auto w-4/6">
           <h3 className="text-2xl font-semibold pb-4 text-white">Recent Posts</h3>
-          <div className="bg-[#FFFFFF] min-h-96 rounded-2xl">
+          <div className="bg-white min-h-96 rounded-2xl">
             <h3 className="text-center pt-40 text-black">No posts available</h3>
           </div>
         </div>
