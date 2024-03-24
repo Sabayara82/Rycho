@@ -154,24 +154,23 @@ export default function PostPage({ params }: { params: { id: string } }) {
   }
   
 
-  const handlePostSong = async () => {
+  const handlePostSong = async (event: React.MouseEvent<HTMLButtonElement>) => {
     if (selectedSong) {
       try {
-        const response = await axios.post("/api/feed/post", {
+        const response = await axios.post("http://localhost:3000/api/feed/post", {
           method: "addPost",
-          body: {
-            spotifyId: spotifyId, 
-            album: selectedSong.album,
-            albumURL: "", //DELETE THIS?
-            songName: selectedSong.name,
-            artist: selectedSong.artist, //ADD THIS
-            createdAt: new Date().toISOString(), 
-            caption: "",
-            likes: 0,
-            roomStat: "public",
-            comments: [],
-          },
+          spotifyId: spotifyId, 
+          songName: selectedSong.name,
+          albumName: selectedSong.album, 
+          artistName: selectedSong.artist, 
+          imageURL: selectedSong.image, 
+          audioURL: selectedSong.audioUrl, 
+          caption: "", 
+          likes: 0,
+          roomStat: true,
+          comments: [],
         });
+
         console.log("Song posted successfully:", response.data);
       } catch (error) {
         console.error("Error posting song:", error);
@@ -180,6 +179,7 @@ export default function PostPage({ params }: { params: { id: string } }) {
       console.warn("No song selected to post.");
     }
   };
+  
 
   const handleBackToAlbums = () => {
     setShowAlbums(true);
