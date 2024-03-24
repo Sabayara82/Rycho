@@ -94,12 +94,50 @@ export default function Home({ params }: { params: { id: string } }) {
     }
   };
 
-  // Function to redirect to the following page
+  const handleFollowButtonClick = async () => {
+    try {
+      if (userIsFollowing === 1) {
+        await axios.delete(`http://localhost:3000/api/users/profile`, {
+          data: {
+            action: "removeFollowing",
+            spotifyId: spotifyId,
+            followUserId: params.id,
+          },
+        });
+
+        await axios.delete(`http://localhost:3000/api/users/profile`, {
+          data: {
+            action: "removeFollower",
+            spotifyId: params.id,
+            followUserId: spotifyId,
+          },
+        });
+
+        setUserFollowing(0);
+      } else {
+        await axios.put(`http://localhost:3000/api/users/profile`, {
+          action: "addFollowing",
+          spotifyId: spotifyId,
+          followUserId: params.id,
+        });
+
+        await axios.put(`http://localhost:3000/api/users/profile`, {
+          action: "addFollower",
+          spotifyId: params.id,
+          followUserId: spotifyId,
+        });
+
+        setUserFollowing(1);
+      }
+    } catch (error) {
+      console.error("Error handling follow/unfollow action: ", error);
+    }
+  };
+
   const handleFollowingClick = () => {
     router.push("/following/" + params.id);
   };
 
-  // Function to redirect to the followers page
   const handleFollowersClick = () => {
     router.push("/followers/" + params.id);
   };
@@ -125,16 +163,16 @@ export default function Home({ params }: { params: { id: string } }) {
             </button>
           )}
         </div>
-        <div className="relative w-[150px] h-[150px] mx-auto mb-16"> 
-          <Image
-            className="bg-[#ffffff] rounded-full mt-10 mb-3 "
-            src={userImage || "/user.png"}
-            alt="image not found"
-            objectFit="cover"
-            fill={true}
-            priority
-          />
-        </div>
+
+        <Image
+          className="bg-[#ffffff] mx-auto rounded-full mt-10 mb-3 max-h-32"
+          src={userImage || "/user.png"}
+          alt="image not found"
+          width={128}
+          height={128}
+          // fill={true}
+          priority
+        />
 
         <h3 className="text-xl font-semibold text-center mb-2">
           {userName || ""}
@@ -159,18 +197,14 @@ export default function Home({ params }: { params: { id: string } }) {
           </a>
         </div>
         {spotifyId == params.id && (
-          <button
-            onClick={handleAddPost}
-            className="font-semibold mx-auto max-w-fit transition duration-500 border-2 border-white-500 hover:border-[#121212] bg-gradient-to-r from-yellow-400 via-pink-500 to-purple-500 rounded-full py-2 px-6 mb-4 mt-2"
-          >
+          <button className="font-semibold mx-auto max-w-fit transition duration-500 border-2 border-white-500 hover:border-[#121212] bg-gradient-to-r from-yellow-400 via-pink-500 to-purple-500 rounded-full py-2 px-6 mb-4 mt-2">
             Create Post
           </button>
         )}
-        <div className="mx-auto w-5/6">
-          <h3 className="text-2xl font-semibold pb-4"> Recent Posts </h3>
-          <div className="bg-[#000000] min-h-96 rounded-2xl">
-            <RecentPosts params={{ id: spotifyId, token: token }} />
-          </div>
+        <div className="mx-auto w-4/6">
+          <h3 className="text-2xl font-semibold pb-4">
+            <RecentPosts params={{ id: params.id, token: token }} />
+          </h3>
         </div>
         <div className="fixed bottom-0 left-0 right-0 h-20 bg-gradient-to-b from-transparent to-black"></div>
       </div>

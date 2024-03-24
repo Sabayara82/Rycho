@@ -66,7 +66,7 @@ export default function LoginPage() {
 
     return (
       <div className="flex flex-col items-center justify-center bg-[#202020] max-w-96 min-h-fit mx-auto rounded-3xl mt-52">
-        <h1 className="text-3xl font-semibold text-center mb-8 mt-10">Login with Spotify</h1>
+        <h1 className="text-3xl font-semibold text-center text-white mb-8 mt-10">Login with Spotify</h1>
         <Image className="rounded-full object-contain"
           src="/spotify.png"
           alt="image not found"

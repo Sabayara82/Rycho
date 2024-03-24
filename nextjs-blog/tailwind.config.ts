@@ -32,6 +32,7 @@ const config: Config = {
       },
       fontSize: {
         'xxl': '1.5rem', // 20px
+        'reg': '1rem'
       },
     },
     fontFamily: {

@@ -2,11 +2,20 @@ import { NextRequest, NextResponse } from "next/server";
 import { connect } from "@/dbConfig/dbConfig";
 import Post from "@/models/postModel";
 
+let connection: any
+
+async function _connect(database: 'feed' | 'notifications' | 'users' | 'rycho'){
+  if (!connection){
+    connection = await connect(database);
+  }
+  return connection;
+}
+
 export async function POST(request: NextRequest) {
   const req = await request.json();
   if (req.method === "addPost") {
     try {
-      await connect("feed");
+      await _connect("feed");
       const {
         spotifyId,
         songName,

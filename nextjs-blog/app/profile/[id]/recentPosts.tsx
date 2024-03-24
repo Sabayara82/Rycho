@@ -145,12 +145,12 @@ export default function RecentPosts({
             key={post._id}
             // from-brown-900 via-navy-800 to-purple-500
             // from-brown-900 via-[#946315] to-[#d9b447]
-            // bg-gradient-to-r from-[#2798ba] via-[#4368ce] to-[#6a44dd]
+            
             className="flex justify-between pl-10 w-full max-w-none mx-auto p-8 mb-4 shadow-lg rounded-lg  border-black border-4"
           >
             <div className="flex flex-col justify-center items-center mx-auto w-2/6">
               <Image
-                className="bg-[#ffffff] mr-2 rounded-lg min-w-[150px]"
+                className="bg-[#ffffff] mr-2 rounded-lg min-w-[150px] max-w-[200px]"
                 src={post.imageURL || "/imageplaceholder.png"}
                 alt="User"
                 width={200} // Increase the width
@@ -158,21 +158,21 @@ export default function RecentPosts({
                 unoptimized={true} // Only if your images are external and can't be optimized by Next.js
               />
             </div>
-            <div className="flex flex-col justify-center items-center mx-auto w-2/6">
-              <h2 className="text-xxl drop-shadow-[2px_2px_rgba(100,149,237,0.8)] uppercase font-semibold text-white hover:text-gray-200">
+            <div className="flex flex-col justify-center items-center mx-auto pl-2 w-2/6">
+              <h2 className="text-xl drop-shadow-[2px_2px_rgba(100,149,237,0.8)] uppercase font-semibold text-white hover:text-gray-200">
                 <a href={post.albumURL} target="_blank">
                   {post.songName}
                 </a>
               </h2>
-              <p className="text-gray-300 tracking-widest font-bebas-neue-regular ">
+              <p className="text-gray-300 text-sm tracking-widest font-bebas-neue-regular ">
                 By {post.artistName}
               </p>
-              <p className="text-gray-300 tracking-widest font-bebas-neue-regular ">
+              <p className="text-gray-300 text-sm tracking-widest font-bebas-neue-regular ">
                 Album: {post.albumName}
               </p>
             </div>
-            <div className="flex flex-col border-l-4 border-[#832d9b] m-2 p-8 rounded-lg justify-top items-left mr-auto ml-10 w-4/6">
-              <p className="italic font-light ">{post.caption}</p>
+            <div className="flex flex-col border-l-4 border-[#832d9b] m-2 p-4 rounded-lg justify-top items-left mr-auto ml-10 w-4/6">
+              <p className="italic font-light text-reg ">{post.caption}</p>
               <p className="text-xs mt-2 text-purple-300">
                 {new Date(post.createdAt).toLocaleString("en-US", {
                   month: "long",
@@ -184,7 +184,7 @@ export default function RecentPosts({
                 })}
               </p>
               <br></br>
-              <div className="flex justify-between items-center mt-2">
+              <div className="flex text-sm justify-between items-center mt-2">
                 <div
                   className="cursor-pointer"
                   onClick={() =>
@@ -284,3 +284,5 @@ export default function RecentPosts({
     </div>
   );
 }
+
+
