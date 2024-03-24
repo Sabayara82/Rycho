@@ -1,14 +1,5 @@
-import { NextRequest, NextResponse } from "next/server";
-export function notificationpage(newNotif: JSON){
-    
-
-
-
-
-
-    
+import { SetStateAction } from "react";
+import {handleStateChange} from './NotificationDsiplay'
+export function updateNotificationState( newValue: boolean) {
+    handleStateChange(newValue)
 }
-
-
-
-

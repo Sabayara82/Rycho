@@ -3,12 +3,13 @@
 import axios from "axios";
 import Image from 'next/image';
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
-
+import { SetStateAction, useEffect, useState } from "react";
+import { notificationpage } from './notificationpage';
 interface Notification {
     postId: string;
     userId: string;
     Type: string;
+    FromUserId:string;
     Text: string;
     Time: string;
 
@@ -40,6 +41,10 @@ export default function NotificationDisplay() {
         }
     };
 
+ 
+    const handleStateChange = (newNotif: boolean) => {
+        setChange(newNotif);
+    };
 
 
 
@@ -51,10 +56,10 @@ export default function NotificationDisplay() {
 
     };
 
-    return (
+    return (<>
         <div className="container mx-auto mt-8 px-4">
             <h1 className="text-4xl font-semibold mb-8">Notifications</h1>
-            <div className="grid grid-cols-3 gap-4">
+            <div className="g">
                 {notifications.map((notification) => (
                     <div key={notification.postId} className="flex flex-col items-center">
                         <button onClick={() => handleUserClick(notification)} className="relative">
@@ -64,7 +69,8 @@ export default function NotificationDisplay() {
                         </button>
                     </div>
                 ))}
-            </div>
-        </div>
+                </div>
+                </div>
+        </>
     );
 }

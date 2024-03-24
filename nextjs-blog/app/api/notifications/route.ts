@@ -5,6 +5,7 @@ import {notificationpage} from "../../notificationpage/notificationpage"
 
 
 
+
 export async function POST(request: NextRequest) {
     const { method, postId, userId, Type, FromUserId, Text, Time } = await request.json();
 
@@ -22,7 +23,7 @@ export async function POST(request: NextRequest) {
     
             const savedNotif= await newNotif.save()
             console.log(savedNotif);
-            notificationpage(savedNotif);
+            notificationpage(true);
             return NextResponse.json({
                 message: "Notification created successfully",
                 success: true,
