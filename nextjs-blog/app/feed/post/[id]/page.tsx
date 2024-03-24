@@ -7,7 +7,8 @@ interface Song {
   name: string;
   artist: string;
   album: string;
-  image: string; 
+  image: string;
+  audioUrl: string; 
 }
 
 interface Playlist {
@@ -29,15 +30,45 @@ export default function PostPage({ params }: { params: { id: string } }) {
   const [selectedSong, setSelectedSong] = useState<Song | null>(null);
   const [spotifyId, setSpotifyId] = useState<string | null>(null);
   const [showAlbums, setShowAlbums] = useState(true);
-  const [selectedAlbum, setSelectedAlbum] = useState(null); 
+  const [selectedAlbum, setSelectedAlbum] = useState<Playlist | null>(null); 
   const [filteredPlaylists, setFilteredPlaylists] = useState<Playlist[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
+  const [audioPlayer, setAudioPlayer] = useState<HTMLAudioElement | null>(null);
+
 
 
 
   const filteredAlbums = playlists.filter((playlist) =>
     playlist.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  const playPreview = (audioUrl: string) => {
+    if (audioPlayer) {
+      if (audioPlayer.src !== audioUrl) {
+        audioPlayer.src = audioUrl;
+        audioPlayer.play();
+      } else {
+        if (audioPlayer.paused) {
+          audioPlayer.play();
+        } else {
+          audioPlayer.pause();
+        }
+      }
+    }
+  };
+
+  useEffect(() => {
+    const newAudioPlayer = new Audio();
+    setAudioPlayer(newAudioPlayer);
+
+    return () => {
+      if (newAudioPlayer) {
+        newAudioPlayer.pause();
+        newAudioPlayer.src = '';
+      }
+    };
+  }, []);
+
 
   useEffect(() => {
     setFilteredPlaylists(playlists.filter((playlist) =>
@@ -110,7 +141,8 @@ export default function PostPage({ params }: { params: { id: string } }) {
         name: item.track.name,
         artist: item.track.artists[0].name,
         album: item.track.album.name,
-        image: item.track.album.images.length > 0 ? item.track.album.images[0].url : '' 
+        image: item.track.album.images.length > 0 ? item.track.album.images[0].url : '',
+        audioUrl: item.track.preview_url
       }));
   
       setPlaylistSongs(extractedSongs);
@@ -134,7 +166,7 @@ export default function PostPage({ params }: { params: { id: string } }) {
             songName: selectedSong.name,
             artist: selectedSong.artist, //ADD THIS
             createdAt: new Date().toISOString(), 
-            caption: "Posted a new song!",
+            caption: "",
             likes: 0,
             roomStat: "public",
             comments: [],
@@ -160,14 +192,14 @@ export default function PostPage({ params }: { params: { id: string } }) {
       <div className="mb-4">
         <input
           type="text"
-          placeholder="Search Album..."
-          className="bg-gray-200 mt-3 mr-4 pl-4 pr-8 py-1 rounded-full focus:outline-none focus:ring focus:border-blue-300 max-w-52 text-black"
+          placeholder={`Search ${selectedAlbum ? selectedAlbum.name : 'Album'}...`} // Display the album name if selected
+          className="bg-gray-200 mt-3 mr-4 pl-4 pr-8 py-1 rounded-full focus:outline-none focus:ring focus:border-blue-300 max-w-104 text-black"
           value={searchQuery}
           onChange={handleInputChange}
         />
         <button
-          onClick={() => setSearchQuery("")}
-          className="px-4 py-2 bg-blue-500 text-white rounded-md ml-2 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          onClick={() => setSearchQuery("")} // Clear search query on button click
+          className="px-4 py-2 bg-gray-500 text-white rounded-md ml-2 hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
         >
           Clear
         </button>
@@ -176,13 +208,17 @@ export default function PostPage({ params }: { params: { id: string } }) {
         {/* Playlists */}
         {showAlbums ? (
           filteredAlbums.map((playlist, index) => (
-            <div key={index} className="m-4 cursor-pointer" onClick={() => fetchPlaylistSongs(playlist.id)}>
+            <div key={index} className="m-4 cursor-pointer" onClick={() => {
+              fetchPlaylistSongs(playlist.id);
+              setSelectedAlbum(playlist); // Set the selected album when clicked
+              setSearchQuery(""); // Clear search query when album is selected
+            }}>
               <img src={playlist.image} alt={playlist.name} className="w-40 h-40 object-cover rounded-lg mb-2" />
               <p className="text-center">{playlist.name}</p>
             </div>
           ))
         ) : (
-          // Render songs of selected playlist only
+          // Render songs of selected album only
           <div className="flex flex-col items-center m-4">
             {/* Button to go back */}
             <button onClick={handleBackToAlbums} className="mb-4 ml-4 w-10 h-10 bg-gray-500 text-white rounded-full hover:bg-gray-600 flex items-center justify-center">
@@ -191,23 +227,51 @@ export default function PostPage({ params }: { params: { id: string } }) {
               </svg>
             </button>
   
-            {/* Playlist songs */}
+            {/* Render filtered songs based on search query */}
             <ul>
-              {playlistSongs.map((song, index) => (
-                <li 
-                  key={index} 
-                  onClick={() => {
-                    setSelectedSong(prevSong => prevSong === song ? null : song);
-                  }} 
-                  className={`cursor-pointer mb-2 flex items-center ${selectedSong === song ? 'bg-gray-200' : ''}`}
-                >
-                  <img src={song.image} alt={song.name} className="w-12 h-12 object-cover rounded-lg mr-2" />
-                  <div>
-                    <p className={`text-base font-semibold ${selectedSong === song ? 'text-gray-800' : ''}`}>{song.name}</p>
-                    <p className={`text-xs ${selectedSong === song ? 'text-gray-800' : ''}`}>{song.artist}</p>
-                  </div>
-                </li>
-              ))}
+              {playlistSongs
+                .filter(song =>
+                  song.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                  song.artist.toLowerCase().includes(searchQuery.toLowerCase())
+                )
+                .map((song, index) => (
+                  <li
+                    key={index}
+                    className={`cursor-pointer mb-2 flex items-center ${selectedSong === song ? 'bg-gray-200' : ''}`}
+                    onClick={() => {
+                      setSelectedSong((prevSong) => (prevSong === song ? null : song));
+                    }}
+                  >
+                    <img src={song.image} alt={song.name} className="w-12 h-12 object-cover rounded-lg mr-2" />
+                    <div>
+                      <p className={`text-base font-semibold ${selectedSong === song ? 'text-gray-800' : ''}`}>{song.name}</p>
+                      <p className={`text-xs ${selectedSong === song ? 'text-gray-800' : ''}`}>{song.artist}</p>
+                    </div>
+                    {/* Play/pause button */}
+                    <button
+                      className="ml-auto mr-4 text-gray-600 focus:outline-none"
+                      onClick={(e) => {
+                        e.stopPropagation(); // Prevent the row selection event from triggering
+                        playPreview(song.audioUrl);
+                      }}
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-6 w-6"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d={selectedSong === song ? "M4 6h16M4 12h16M4 18h16" : "M5 3a2 2 0 012-2h10a2 2 0 012 2v18a2 2 0 01-2 2H7a2 2 0 01-2-2V3z"}
+                        />
+                      </svg>
+                    </button>
+                  </li>
+                ))}
             </ul>
   
             {/* Button to post the selected song */}
@@ -221,4 +285,5 @@ export default function PostPage({ params }: { params: { id: string } }) {
       </div>
     </div>
   );
+  
 }
