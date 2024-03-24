@@ -30,10 +30,13 @@ export default function PostPage({ params }: { params: { id: string } }) {
   const [selectedSong, setSelectedSong] = useState<Song | null>(null);
   const [spotifyId, setSpotifyId] = useState<string | null>(null);
   const [showAlbums, setShowAlbums] = useState(true);
+  const [showBackButton, setShowBackButton] = useState(false)
   const [selectedAlbum, setSelectedAlbum] = useState<Playlist | null>(null); 
   const [filteredPlaylists, setFilteredPlaylists] = useState<Playlist[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [audioPlayer, setAudioPlayer] = useState<HTMLAudioElement | null>(null);
+  const [showPopup, setShowPopup] = useState(false);
+  const [caption, setCaption] = useState('');
 
 
 
@@ -120,6 +123,7 @@ export default function PostPage({ params }: { params: { id: string } }) {
 
           setPlaylists(playlistsData);
           setFilteredPlaylists(playlistsData);
+          setShowBackButton(false)
         } catch (error) {
           console.error("Error fetching playlists: ", error);
         }
@@ -147,7 +151,8 @@ export default function PostPage({ params }: { params: { id: string } }) {
   
       setPlaylistSongs(extractedSongs);
       setSelectedPlaylistId(playlistId); 
-      setShowAlbums(false); 
+      setShowAlbums(false);
+      setShowBackButton(true) 
     } catch (error) {
       console.error("Error fetching songs for playlist: ", error);
     }
@@ -183,25 +188,37 @@ export default function PostPage({ params }: { params: { id: string } }) {
 
   const handleBackToAlbums = () => {
     setShowAlbums(true);
+    setShowBackButton(false)
     setSelectedAlbum(null);
   };
 
-  
+  const handleOpenPopup = (song: Song) => {
+    setSelectedSong(song);
+    setShowPopup(true);
+  };
+
+  const handleClosePopup = () => {
+    setSelectedSong(null);
+    setShowPopup(false);
+  };
+
   return (
     <div className="flex flex-col items-center m-4">
       <div className="mb-4">
         <input
           type="text"
-          placeholder={`Search ${selectedAlbum ? selectedAlbum.name : 'Album'}...`} // Display the album name if selected
+          placeholder={`Search ${selectedAlbum ? selectedAlbum.name : 'Album'}...`}
           className="bg-gray-200 mt-3 mr-4 pl-4 pr-8 py-1 rounded-full focus:outline-none focus:ring focus:border-blue-300 max-w-104 text-black"
           value={searchQuery}
           onChange={handleInputChange}
         />
         <button
-          onClick={() => setSearchQuery("")} // Clear search query on button click
-          className="px-4 py-2 bg-gray-500 text-white rounded-md ml-2 hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          onClick={handleBackToAlbums}
+          className="mb-4 ml-4 w-10 h-10 bg-gray-500 text-white rounded-full hover:bg-gray-600 items-center justify-center focus:outline-none focus:ring-2 focus:text-black"
         >
-          Clear
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 inline-block align-middle" viewBox="0 0 20 20" fill="currentColor">
+            <path fillRule="evenodd" d="M12.293 3.293a1 1 0 011.414 1.414L7.414 10l6.293 6.293a1 1 0 01-1.414 1.414l-7-7a1 1 0 010-1.414l7-7a1 1 0 011.414 0z" clipRule="evenodd" />
+          </svg>
         </button>
       </div>
       <div className="flex flex-wrap justify-center">
@@ -221,11 +238,11 @@ export default function PostPage({ params }: { params: { id: string } }) {
           // Render songs of selected album only
           <div className="flex flex-col items-center m-4">
             {/* Button to go back */}
-            <button onClick={handleBackToAlbums} className="mb-4 ml-4 w-10 h-10 bg-gray-500 text-white rounded-full hover:bg-gray-600 flex items-center justify-center">
+            {/* <button onClick={handleBackToAlbums} className="mb-4 ml-4 w-10 h-10 bg-gray-500 text-white rounded-full hover:bg-gray-600 flex items-center justify-center">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
                 <path fillRule="evenodd" d="M12.293 3.293a1 1 0 011.414 1.414L7.414 10l6.293 6.293a1 1 0 01-1.414 1.414l-7-7a1 1 0 010-1.414l7-7a1 1 0 011.414 0z" clipRule="evenodd" />
               </svg>
-            </button>
+            </button> */}
   
             {/* Render filtered songs based on search query */}
             <ul>
@@ -237,11 +254,23 @@ export default function PostPage({ params }: { params: { id: string } }) {
                 .map((song, index) => (
                   <li
                     key={index}
-                    className={`cursor-pointer mb-2 flex items-center ${selectedSong === song ? 'bg-gray-200' : ''}`}
+                    className={`cursor-pointer mb-2 flex items-center ${selectedSong === song ? 'bg-gray-300' : ''}`}
                     onClick={() => {
-                      setSelectedSong((prevSong) => (prevSong === song ? null : song));
+                      setSelectedSong(prevSong => (prevSong === song ? null : song));
                     }}
                   >
+                  {/* Post button */}
+                  {selectedSong === song && (
+                      <button
+                        className="mr-2 text-black focus:outline-none group-hover:opacity-100 transition-opacity"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setShowPopup(true);
+                        }}
+                      >
+                        POST
+                      </button>
+                    )}
                     <img src={song.image} alt={song.name} className="w-12 h-12 object-cover rounded-lg mr-2" />
                     <div>
                       <p className={`text-base font-semibold ${selectedSong === song ? 'text-gray-800' : ''}`}>{song.name}</p>
@@ -255,31 +284,45 @@ export default function PostPage({ params }: { params: { id: string } }) {
                         playPreview(song.audioUrl);
                       }}
                     >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="h-6 w-6"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d={selectedSong === song ? "M4 6h16M4 12h16M4 18h16" : "M5 3a2 2 0 012-2h10a2 2 0 012 2v18a2 2 0 01-2 2H7a2 2 0 01-2-2V3z"}
-                        />
+                      {/* SVG triangle icon for play button with rounder tips */}
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        {selectedSong === song ? (
+                          // Three lines for pause
+                          <>
+                            <rect x="4" y="6" width="4" height="12" />
+                            <rect x="14" y="6" width="4" height="12" />
+                          </>
+                        ) : (
+                          // Play triangle with rounder tips
+                          <path  strokeLinejoin="round" strokeWidth={2} d="M4 6l16 6-16 6z" />
+                        )}
                       </svg>
                     </button>
                   </li>
                 ))}
             </ul>
   
-            {/* Button to post the selected song */}
-            {selectedSong && (
-              <button onClick={handlePostSong} className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
-                Post Song
-              </button>
+            {/* Post song popup */}
+            {showPopup && (
+              <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center popup-background" onClick={handleClosePopup}>
+                <div className="bg-white p-4 rounded-lg shadow-lg" onClick={(e) => e.stopPropagation()}>
+                  <img src={selectedSong?.image} alt={selectedSong?.name} className="w-40 h-40 object-cover rounded-lg mb-2" />
+                  <p className="text-base font-semibold text-black mb-1">{selectedSong?.name}</p>
+                  <p className="text-sm text-black mb-2">{selectedSong?.artist}</p>
+                  <input
+                    type="text"
+                    placeholder="Enter caption..."
+                    className="border-b border-black text-black rounded-none px-2 py-1 w-full"
+                    value={caption}
+                    onChange={(e) => setCaption(e.target.value)}
+                  />
+                  <button onClick={handlePostSong} className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 mt-2">
+                    Post Song
+                  </button>
+                </div>
+              </div>
             )}
+
           </div>
         )}
       </div>
