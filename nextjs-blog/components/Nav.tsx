@@ -60,7 +60,7 @@ const Nav = () => {
   getUsersList();
 
   return (
-    <nav className="bg-[#202020] flex justify-between items-center w-full pt-1 pb-2">
+    <nav className="bg-white flex justify-between items-center w-full pt-1 pb-2">
       <a
         href={token ? "/feed" : "/login"}
         className="flex gap-2 flex-center pt-2 ml-4 max-w-fit"
@@ -72,7 +72,7 @@ const Nav = () => {
           width={30}
           height={30}
         /> */}
-        <p className="font-bebas-neue-regular text-4xl">Rycho</p>
+        <p className="font-bebas-neue-regular text-4xl tracking-wider pl-4  text-black">Rycho</p>
       </a>
       {token && (
         <div className="flex justify-end ">
@@ -82,7 +82,7 @@ const Nav = () => {
                 <input
                   type="text"
                   placeholder="Search User..."
-                  className="bg-gray-200 mt-3 mr-4 pl-4 pr-8 py-1 rounded-full focus:outline-none focus:ring focus:border-blue-300 max-w-52 text-black"
+                  className="bg-gray-200 mt-3 mr-4 pl-4 pr-8 py-1 rounded-full focus:outline-none focus:ring  focus:border-blue-300 max-w-52 text-black"
                   onChange={(e) => handleSearch(e)}
                 />
               </div>
