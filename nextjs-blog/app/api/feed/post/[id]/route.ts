@@ -33,24 +33,37 @@ export async function GET(request: NextRequest, {params} : {params: {id: string}
     }
 }
 
-// try update instead
-export async function PUT(request: NextRequest) {
-    const url = new URL(request.url);
-    const id = url.searchParams.get("id");
-    const likes = url.searchParams.get("likes");
-    // const {postID, likes} = reqBody; 
-    // const thePost = await Post.findOne({ spotifyId: id });
-    const thePost = await Post.findByIdAndUpdate(id, { likes }, { new: true });
+export async function PATCH(request: NextRequest, {params} : {params: {id: string}}) {
+    const reqBody = await request.json();
+    const action = reqBody.action;
 
-    if (!thePost) {
-        return NextResponse.json({ error: "User not found" }, { status: 404 });
+    if (!action || (action !== "addALike" && action !== "removeALike")) {
+        return NextResponse.json({ error: "Invalid request" }, { status: 400 });
     }
 
-    thePost.likes = likes; 
-    await thePost.save();  
-    return NextResponse.json({
-            message: "Like count has been updated", 
-            success: true 
-        }); 
-} 
+    try {
+        let update;
+        if (action === "addALike") {
+            update = { $inc: { likes: 1 } }; // Increment likes by 1
+        } else {
+            update = { $inc: { likes: -1 } }; // Decrement likes by 1
+        }
+
+        const thePost = await Post.findByIdAndUpdate(params.id, update, { new: true });
+
+        if (!thePost) {
+            return NextResponse.json({ error: "Post not found" }, { status: 404 });
+        }
+        return NextResponse.json({
+            message: `Like count has been ${action === "addALike" ? "incremented" : "decremented"}`,
+            success: true,
+            likes: thePost.likes // Optionally return the updated likes count
+        });
+
+    } catch (e) {
+        const error = e as any;
+        return NextResponse.json({ error: "An error occurred", details: error.message }, { status: 500 });
+    }
+}
+
 
