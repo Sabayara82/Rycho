@@ -138,7 +138,7 @@ export default function RecentPosts({
   }, [visibleCommentsPostId, comments, userProfiles]);
 
   return (
-    <div className="min-h-screen bg-zinc-800 rounded-lg">
+    <div className="min-h-screen bg-transparent rounded-lg">
       {posts.length > 0 ? (
         posts.map((post) => (
           <div
@@ -146,9 +146,9 @@ export default function RecentPosts({
             // from-brown-900 via-navy-800 to-purple-500
             // from-brown-900 via-[#946315] to-[#d9b447]
             
-            className="flex justify-between pl-10 w-full max-w-none mx-auto p-8 mb-4 shadow-lg rounded-lg  border-black border-4"
+            className="flex flex-col lg:flex-row bg-zinc-800  justify-between pl-10 w-full max-w-none mx-auto p-8 mb-4 shadow-lg rounded-lg  border-black border-4"
           >
-            <div className="flex flex-col justify-center items-center mx-auto w-2/6">
+            <div className="flex flex-col justify-center items-center mx-auto w-2/6 ">
               <Image
                 className="bg-[#ffffff] mr-2 rounded-lg min-w-[150px] max-w-[200px]"
                 src={post.imageURL || "/imageplaceholder.png"}
@@ -158,7 +158,7 @@ export default function RecentPosts({
                 unoptimized={true} // Only if your images are external and can't be optimized by Next.js
               />
             </div>
-            <div className="flex flex-col justify-center items-center mx-auto pl-2 w-2/6">
+            <div className="flex flex-col justify-center items-center mx-auto pl-2 w-2/6 text-center">
               <h2 className="text-xl drop-shadow-[2px_2px_rgba(100,149,237,0.8)] uppercase font-semibold text-white hover:text-gray-200">
                 <a href={post.albumURL} target="_blank">
                   {post.songName}
