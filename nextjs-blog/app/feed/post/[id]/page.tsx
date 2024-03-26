@@ -38,6 +38,8 @@ export default function PostPage({ params }: { params: { id: string } }) {
   const [audioPlayer, setAudioPlayer] = useState<HTMLAudioElement | null>(null);
   const [showPopup, setShowPopup] = useState(false);
   const [caption, setCaption] = useState('');
+  const [topSongs, setTopSongs] = useState<Song[]>([]);
+
 
 
 
@@ -72,6 +74,11 @@ export default function PostPage({ params }: { params: { id: string } }) {
       }
     };
   }, []);
+  useEffect(() => {
+    if (token) {
+      fetchTopSongs(token);
+    }
+  }, [token]);
 
 
   useEffect(() => {
@@ -158,6 +165,29 @@ export default function PostPage({ params }: { params: { id: string } }) {
       console.error("Error fetching songs for playlist: ", error);
     }
   }
+
+  const fetchTopSongs = async (token:any) => {
+    try {
+      const { data } = await axios.get('https://api.spotify.com/v1/me/top/tracks?limit=6', {
+        headers: {
+          Authorization: 'Bearer ' + token
+        }
+      });
+  
+      const topSongsData = Array.isArray(data.items) ? data.items.map((item:any) => ({
+        name: item.name,
+        artist: item.artists[0].name,
+        album: item.album.name,
+        image: item.album.images.length > 0 ? item.album.images[0].url : '',
+        audioUrl: item.preview_url
+      })) : [];
+  
+      setTopSongs(topSongsData);
+    } catch (error) {
+      console.error("Error fetching top songs: ", error);
+    }
+  }
+
   
 
   const handlePostSong = async (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -194,10 +224,10 @@ export default function PostPage({ params }: { params: { id: string } }) {
     setSelectedAlbum(null);
   };
 
-  const handleOpenPopup = (song: Song) => {
-    setSelectedSong(song);
-    setShowPopup(true);
-  };
+  // const handleOpenPopup = (song: Song) => {
+  //   setSelectedSong(song);
+  //   setShowPopup(true);
+  // };
 
   const handleClosePopup = () => {
     setSelectedSong(null);
@@ -214,6 +244,7 @@ export default function PostPage({ params }: { params: { id: string } }) {
           value={searchQuery}
           onChange={handleInputChange}
         />
+        {/* Button to go back */}
         <button
           onClick={handleBackToAlbums}
           className="mb-4 ml-4 w-10 h-10 bg-gray-500 text-white rounded-full hover:bg-gray-600 items-center justify-center focus:outline-none focus:ring-2 focus:text-black"
@@ -224,6 +255,23 @@ export default function PostPage({ params }: { params: { id: string } }) {
         </button>
       </div>
       <div className="flex flex-wrap justify-center">
+      {/* Top Songs */}
+        <div>
+        <h2 className="text-2xl font-bold mb-4">Top Songs</h2>
+        <ul>
+          {topSongs.map((song, index) => (
+            <li key={index} className="flex items-center space-x-4 mb-4">
+              <img src={song.image} alt={song.name} className="w-16 h-16 rounded-md" />
+              <div>
+                <div className="text-black">{song.name}</div>
+                <div>{song.artist}</div>
+                <div>{song.album}</div>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </div>
+
         {/* Playlists */}
         {showAlbums ? (
           filteredAlbums.map((playlist, index) => (
@@ -239,17 +287,9 @@ export default function PostPage({ params }: { params: { id: string } }) {
         ) : (
           // Render songs of selected album only
           <div className="flex flex-col items-center m-4">
-            {/* Button to go back */}
-            {/* <button onClick={handleBackToAlbums} className="mb-4 ml-4 w-10 h-10 bg-gray-500 text-white rounded-full hover:bg-gray-600 flex items-center justify-center">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
-                <path fillRule="evenodd" d="M12.293 3.293a1 1 0 011.414 1.414L7.414 10l6.293 6.293a1 1 0 01-1.414 1.414l-7-7a1 1 0 010-1.414l7-7a1 1 0 011.414 0z" clipRule="evenodd" />
-              </svg>
-            </button> */}
-  
             {/* Render filtered songs based on search query */}
             <ul>
-              {playlistSongs
-                .filter(song =>
+              {playlistSongs.filter(song =>
                   song.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
                   song.artist.toLowerCase().includes(searchQuery.toLowerCase())
                 )
