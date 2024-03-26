@@ -35,15 +35,23 @@ export default function RecentPosts({
   const [posts, setPosts] = useState<any[]>([]);
   const [comments, setComments] = useState<{ [postId: string]: any[] }>({});
   const [visibleCommentsPostId, setVisibleCommentsPostId] = useState(null);
-  const [userProfiles, setUserProfiles] = useState<{[id: string]: { userName: string; userImage: string | null };}>({});
+  const [userProfiles, setUserProfiles] = useState<{
+    [id: string]: { userName: string; userImage: string | null };
+  }>({});
+  const [refreshPosts, setRefreshPosts] = useState(false);
 
+  const [audioPlayer, setAudioPlayer] = useState<HTMLAudioElement | null>(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [isHovering, setIsHovering] = useState(false);
+  const [hoveredPostId, setHoveredPostId] = useState(null);
+  
   const router = useRouter();
 
   useEffect(() => {
     if (token && spotifyId) {
       fetchPosts();
     }
-  }, [token, spotifyId]);
+  }, [token, spotifyId, refreshPosts]);
 
   useEffect(() => {
     if (posts.length > 0) {
@@ -52,6 +60,7 @@ export default function RecentPosts({
   }, [posts]);
 
   const fetchPosts = async () => {
+    const allOfThePosts = [];
     try {
       const response = await axios.get(
         `http://localhost:3000/api/feed/post/?spotifyId=${spotifyId}`,
@@ -63,10 +72,17 @@ export default function RecentPosts({
       );
 
       const { allPosts } = response.data;
-      setPosts(allPosts);
+      allOfThePosts.push(...allPosts);
+      // setPosts(allPosts);
     } catch (error) {
       console.error("Error fetching user's posts': ", error);
     }
+
+    const sortedPosts = allOfThePosts
+      .sort((a, b) => a.updatedAt - b.updatedAt)
+      .reverse();
+    setPosts(sortedPosts);
+    console.log(sortedPosts.length);
   };
 
   const fetchComments = async () => {
@@ -137,6 +153,63 @@ export default function RecentPosts({
     prefetchProfiles();
   }, [visibleCommentsPostId, comments, userProfiles]);
 
+  const goToUserPage = async (index: string) => {
+    window.location.href = `http://localhost:3000/profile/${index}`;
+  };
+
+  const deletePost = async (postId: string) => {
+    try {
+      const response = await axios.delete(
+        `http://localhost:3000/api/feed/post/${postId}`,
+        {
+          headers: {
+            Authorization: "Bearer " + token,
+          },
+        }
+      );
+      console.log(response);
+      setRefreshPosts((prev) => !prev);
+    } catch (error) {
+      console.error("Error deleting user's posts': ", error);
+    }
+  };
+
+  useEffect(() => {
+    const newAudioPlayer = new Audio();
+    setAudioPlayer(newAudioPlayer);
+
+    return () => {
+      if (newAudioPlayer) {
+        newAudioPlayer.pause();
+        newAudioPlayer.src = "";
+      }
+    };
+  }, []);
+
+  const playPreview = (audioUrl: string) => {
+    if (audioPlayer) {
+      audioPlayer.addEventListener("error", (e) => {
+        console.error("Error with audio playback:", e);
+      });
+
+      if (audioPlayer.src !== audioUrl) {
+        audioPlayer.src = audioUrl;
+        audioPlayer
+          .play()
+          .catch((e) => console.error("Error playing the audio:", e));
+      } else {
+        if (audioPlayer.paused) {
+          audioPlayer
+            .play()
+            .catch((e) => console.error("Error playing the audio:", e));
+        } else {
+          audioPlayer.pause();
+        }
+      }
+    }
+  };
+  
+
   return (
     <div className="min-h-screen bg-transparent rounded-lg">
       {posts.length > 0 ? (
@@ -145,19 +218,74 @@ export default function RecentPosts({
             key={post._id}
             // from-brown-900 via-navy-800 to-purple-500
             // from-brown-900 via-[#946315] to-[#d9b447]
-            
+
             className="flex flex-col lg:flex-row bg-zinc-800  justify-between pl-10 w-full max-w-none mx-auto p-8 mb-4 shadow-lg rounded-lg  border-black border-4"
           >
-            <div className="flex flex-col justify-center items-center mx-auto w-2/6 ">
-              <Image
-                className="bg-[#ffffff] mr-2 rounded-lg min-w-[150px] max-w-[200px]"
-                src={post.imageURL || "/imageplaceholder.png"}
-                alt="User"
-                width={200} // Increase the width
-                height={200} // Increase the height
-                unoptimized={true} // Only if your images are external and can't be optimized by Next.js
-              />
+            <div
+              className="relative ml-auto mr-4"
+              onMouseEnter={() => setHoveredPostId(post._id)}
+              onMouseLeave={() => setHoveredPostId(null)}
+            >
+              <button
+                className="text-gray-600 focus:outline-none"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  playPreview(post.audioURL);
+                  setIsPlaying(!isPlaying); // Toggle play state
+                }}
+              >
+                {/* Overlay appears on hover */}
+                {(hoveredPostId === post._id) && (
+                    <div className="absolute inset-0 flex justify-center items-center  z-10">
+                    {/* Conditionally show play or pause icon */}
+                    {isPlaying ? (
+                      <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-36 w-36" // Adjusted size for visibility
+                      viewBox="0 0 24 24"
+                      fill="none" // Changed to 'none' for play/pause icons
+                      stroke="white" // Changed stroke color for better visibility
+                    >
+                      {/* Pause Icon */}
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M10 9v6m4-6v6"
+                      />
+                    </svg>
+                  ) : (
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-36 w-36" // Adjusted size for visibility
+                      viewBox="0 0 24 24"
+                      fill="none" // Changed to 'none' for play/pause icons
+                      stroke="white" // Changed stroke color for better visibility
+                    >
+                      {/* Play Icon */}
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"
+                      />
+                    </svg>
+                    )}
+                    </div>
+                )}
+                <Image
+                  className={`bg-[#ffffff] mr-2 rounded-lg min-w-[150px] max-w-[200px] ${
+                    (hoveredPostId===post._id) ? "opacity-50" : "opacity-100"
+                  }`}
+                  src={post.imageURL || "/imageplaceholder.png"}
+                  alt="User"
+                  width={200}
+                  height={200}
+                  unoptimized={true}
+                />
+              </button>
             </div>
+
             <div className="flex flex-col justify-center items-center mx-auto pl-2 w-2/6 text-center">
               <h2 className="text-xl drop-shadow-[2px_2px_rgba(100,149,237,0.8)] uppercase font-semibold text-white hover:text-gray-200">
                 <a href={post.albumURL} target="_blank">
@@ -241,12 +369,14 @@ export default function RecentPosts({
                         <div>
                           <span className="text-sm ">
                             <strong>
-                              {userProfiles[comment.spotifyId]?.userName}:
+                              <button
+                                onClick={() => goToUserPage(comment.spotifyId)}
+                              >
+                                {userProfiles[comment.spotifyId]?.userName}:
+                              </button>
                             </strong>
                           </span>
-                          <p className="text-sm ">
-                            {comment.content}
-                          </p>
+                          <p className="text-sm ">{comment.content}</p>
                           <p className="text-xs text-purple-300 ">
                             {new Date(comment.createdAt).toLocaleString(
                               "en-US",
@@ -273,6 +403,24 @@ export default function RecentPosts({
                   No comments available
                 </p>
               ) : null}
+              <button onClick={() => deletePost(post._id)}>
+                <div className="h-full pt-10 flex justify-end ">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-6 w-6 text-gray-400 hover:text-red-400"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                    />
+                  </svg>
+                </div>
+              </button>
             </div>
           </div>
         ))
@@ -284,5 +432,3 @@ export default function RecentPosts({
     </div>
   );
 }
-
-

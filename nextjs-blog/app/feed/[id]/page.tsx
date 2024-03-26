@@ -132,9 +132,8 @@ export default function Feed({params} : {params: {id: string}}) {
           let numberOfTheLikes = posts[likedIndex].likes + 1
           const changingLike = await axios.patch(`http://localhost:3000/api/feed/post/${postID}`, {action: 'addALike'});
           console.log(changingLike)
-          posts[likedIndex].likes = changingLike.likes;
-          console.log("this is the updated version",posts[likedIndex].likes); 
-          console.log
+          posts[likedIndex].likes = changingLike;
+          
 
         }catch(error){
           console.error("Unable to make the changes")
@@ -142,8 +141,8 @@ export default function Feed({params} : {params: {id: string}}) {
       }else{
         try{
           const changingLike = await axios.patch(`http://localhost:3000/api/feed/post/${postID}`, {action: 'removeALike'});
-          console.log(changingLike.likes)
-          posts[likedIndex].likes = changingLike.likes;
+          console.log(changingLike)
+          posts[likedIndex].likes = changingLike;
           console.log("WE ARE REMOVING A LIKE HERE"); 
           console.log("this is the updated version",posts[likedIndex].likes); 
         }catch(error){
@@ -152,9 +151,9 @@ export default function Feed({params} : {params: {id: string}}) {
       }
     }
 
-    const getUserWebsite = async (userIndex: number) => {
-      let userIndexx = posts[userIndex].spotifyId;
-      window.location.href = `http://localhost:3000/profile/${userIndexx}`;
+    const getUserWebsite = async (index: number) => {
+      let userIndex = posts[index].spotifyId;
+      window.location.href = `http://localhost:3000/profile/${userIndex}`;
     };
 
     const addAcomment = async (theInfo: string) => {
@@ -214,7 +213,9 @@ export default function Feed({params} : {params: {id: string}}) {
         <div className="max-w-lg mx-auto">
           {ableFeed ? (
             posts.map((post, index) => (
-              <div className="bg-gray-500 rounded-md shadow-md p-4 mb-4">
+              <div 
+                key={post._id}
+                className="bg-gray-500 rounded-md shadow-md p-4 mb-4">
                 <div className="flex items-start justify-between mb-2">
                   {/* User Details */}
                   <div className="flex items-center">
