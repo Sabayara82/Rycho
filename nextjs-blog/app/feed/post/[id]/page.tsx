@@ -171,7 +171,7 @@ export default function PostPage({ params }: { params: { id: string } }) {
           artistName: selectedSong.artist, 
           imageURL: selectedSong.image, 
           audioURL: selectedSong.audioUrl, 
-          caption: "", 
+          caption: caption, 
           likes: 0,
           roomStat: false,
           comments: [],
