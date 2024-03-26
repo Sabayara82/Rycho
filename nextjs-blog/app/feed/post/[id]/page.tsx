@@ -38,6 +38,7 @@ export default function PostPage({ params }: { params: { id: string } }) {
   const [audioPlayer, setAudioPlayer] = useState<HTMLAudioElement | null>(null);
   const [showPopup, setShowPopup] = useState(false);
   const [caption, setCaption] = useState('');
+  const [recommendations, setRecommendedSongs] = useState<Song[]>([]);
 
 
 
@@ -141,23 +142,59 @@ export default function PostPage({ params }: { params: { id: string } }) {
           Authorization: 'Bearer ' + token
         }
       });
-  
+
       const extractedSongs: Song[] = data.items.map((item: any) => ({
         name: item.track.name,
         artist: item.track.artists[0].name,
         album: item.track.album.name,
         image: item.track.album.images.length > 0 ? item.track.album.images[0].url : '',
         audioUrl: item.track.preview_url
+        
       }));
-  
+
       setPlaylistSongs(extractedSongs);
-      setSelectedPlaylistId(playlistId); 
+      setSelectedPlaylistId(playlistId);
       setShowAlbums(false);
-      setShowBackButton(true) 
+      setShowBackButton(true);
+
+      // Fetch recommendations based on the fetched playlist songs
+      const recommendations = await getRecommendations(extractedSongs);
+      setRecommendedSongs(recommendations); // Update state with recommended songs
     } catch (error) {
       console.error("Error fetching songs for playlist: ", error);
     }
   }
+  
+  const getRecommendations = async (playlistSongs: Song[]) => {
+    try {
+      // Extract track IDs from playlist songs
+      const seedTracks = playlistSongs.map(song => song.name).join(',');
+      console.log("Seed Tracks:", seedTracks);
+      const { data } = await axios.get('https://api.spotify.com/v1/recommendations', {
+        params: {
+          seed_tracks: seedTracks,
+          limit: 3, // You can adjust the limit as per your requirement
+        },
+        headers: {
+          Authorization: 'Bearer ' + token
+        }
+      });
+  
+      const recommendedSongs: Song[] = data.tracks.map((track: any) => ({
+        name: track.name,
+        artist: track.artists[0].name,
+        album: track.album.name,
+        image: track.album.images.length > 0 ? track.album.images[0].url : '',
+        audioUrl: track.preview_url
+      }));
+  
+      return recommendedSongs;
+    } catch (error) {
+      console.error("Error fetching recommendations: ", error);
+      return []; // Return an empty array in case of error
+    }
+  }
+  
   
 
   const handlePostSong = async (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -214,10 +251,10 @@ export default function PostPage({ params }: { params: { id: string } }) {
           value={searchQuery}
           onChange={handleInputChange}
         />
+        {/* Button to go back */}
         <button
           onClick={handleBackToAlbums}
-          className="mb-4 ml-4 w-10 h-10 bg-gray-500 text-white rounded-full hover:bg-gray-600 items-center justify-center focus:outline-none focus:ring-2 focus:text-black"
-        >
+          className="mb-4 ml-4 w-10 h-10 bg-gray-500 text-white rounded-full hover:bg-gray-600 items-center justify-center focus:outline-none focus:ring-2 focus:text-black">
           <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 inline-block align-middle" viewBox="0 0 20 20" fill="currentColor">
             <path fillRule="evenodd" d="M12.293 3.293a1 1 0 011.414 1.414L7.414 10l6.293 6.293a1 1 0 01-1.414 1.414l-7-7a1 1 0 010-1.414l7-7a1 1 0 011.414 0z" clipRule="evenodd" />
           </svg>
@@ -239,12 +276,6 @@ export default function PostPage({ params }: { params: { id: string } }) {
         ) : (
           // Render songs of selected album only
           <div className="flex flex-col items-center m-4">
-            {/* Button to go back */}
-            {/* <button onClick={handleBackToAlbums} className="mb-4 ml-4 w-10 h-10 bg-gray-500 text-white rounded-full hover:bg-gray-600 flex items-center justify-center">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
-                <path fillRule="evenodd" d="M12.293 3.293a1 1 0 011.414 1.414L7.414 10l6.293 6.293a1 1 0 01-1.414 1.414l-7-7a1 1 0 010-1.414l7-7a1 1 0 011.414 0z" clipRule="evenodd" />
-              </svg>
-            </button> */}
   
             {/* Render filtered songs based on search query */}
             <ul>
@@ -324,11 +355,24 @@ export default function PostPage({ params }: { params: { id: string } }) {
                 </div>
               </div>
             )}
-
+  
+            {/* Recommended songs */}
+            <div className="mt-8">
+              <h2 className="text-xl font-semibold mb-4">Recommended Songs</h2>
+              <ul>
+                {recommendations.map((song, index) => (
+                  <li key={index} className="mb-2">
+                    {song.name} - {song.artist}
+                  </li>
+                ))}
+              </ul>
+            </div>
+  
           </div>
         )}
       </div>
     </div>
   );
+  
   
 }
