@@ -41,8 +41,7 @@ export default function RecentPosts({
   const [refreshPosts, setRefreshPosts] = useState(false);
 
   const [audioPlayer, setAudioPlayer] = useState<HTMLAudioElement | null>(null);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [isHovering, setIsHovering] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(true);
   const [hoveredPostId, setHoveredPostId] = useState(null);
   
   const router = useRouter();
@@ -216,27 +215,32 @@ export default function RecentPosts({
         posts.map((post) => (
           <div
             key={post._id}
-            // from-brown-900 via-navy-800 to-purple-500
-            // from-brown-900 via-[#946315] to-[#d9b447]
-
-            className="flex flex-col lg:flex-row bg-zinc-800  justify-between pl-10 w-full max-w-none mx-auto p-8 mb-4 shadow-lg rounded-lg  border-black border-4"
+            className="flex flex-col lg:flex-row  bg-zinc-800  justify-between pl-10 w-full max-w-none mx-auto p-8 mb-4 shadow-lg rounded-lg  border-black border-4"
           >
             <div
-              className="relative ml-auto mr-4"
-              onMouseEnter={() => setHoveredPostId(post._id)}
-              onMouseLeave={() => setHoveredPostId(null)}
+              className="flex relative ml-auto mr-4 lg:content-left"
+              onMouseEnter={() => {
+                if (hoveredPostId !== post._id) {setIsPlaying(!isPlaying)}
+                setHoveredPostId(post._id)
+              }}
+              onMouseLeave={() => {
+                // if (hoveredPostId === post._id) {setIsPlaying(false)}
+                setHoveredPostId(null)
+              }}
             >
               <button
                 className="text-gray-600 focus:outline-none"
                 onClick={(e) => {
+                  if (hoveredPostId !== post._id) {setIsPlaying(false)}
                   e.stopPropagation();
                   playPreview(post.audioURL);
                   setIsPlaying(!isPlaying); // Toggle play state
+                  console.log("IsPlaying " + isPlaying);
                 }}
               >
                 {/* Overlay appears on hover */}
                 {(hoveredPostId === post._id) && (
-                    <div className="absolute inset-0 flex justify-center items-center  z-10">
+                    <div className="absolute inset-0 flex justify-center items-center z-10">
                     {/* Conditionally show play or pause icon */}
                     {isPlaying ? (
                       <svg
@@ -285,7 +289,6 @@ export default function RecentPosts({
                 />
               </button>
             </div>
-
             <div className="flex flex-col justify-center items-center mx-auto pl-2 w-2/6 text-center">
               <h2 className="text-xl drop-shadow-[2px_2px_rgba(100,149,237,0.8)] uppercase font-semibold text-white hover:text-gray-200">
                 <a href={post.albumURL} target="_blank">
@@ -315,11 +318,12 @@ export default function RecentPosts({
               <div className="flex text-sm justify-between items-center mt-2">
                 <div
                   className="cursor-pointer"
-                  onClick={() =>
+                  onClick={() => {
+                    
                     setVisibleCommentsPostId(
                       visibleCommentsPostId !== post._id ? post._id : null
                     )
-                  }
+                  }}
                 >
                   Comments: {comments[post._id] ? comments[post._id].length : 0}
                 </div>
@@ -354,7 +358,7 @@ export default function RecentPosts({
                       <>
                         {userProfiles[comment.spotifyId].userImage ? (
                           <Image
-                            className="bg-[#ffffff] rounded-full mr-2"
+                            className="bg-[#ffffff] rounded-full mr-2 max-h-12 max-w-12"
                             src={
                               userProfiles[comment.spotifyId].userImage ||
                               "/user.png"
@@ -363,6 +367,7 @@ export default function RecentPosts({
                             width={50} // Set appropriate width
                             height={50} // Set appropriate height
                             unoptimized={true} // Only if your images are external and can't be optimized by Next.js
+                            priority
                           />
                         ) : null}
                         {/* Comment Name, Content, and Date */}
@@ -394,7 +399,7 @@ export default function RecentPosts({
                       </>
                     ) : (
                       // Fallback or loading state if profile hasn't been fetched yet
-                      <span>Loading user profile...</span>
+                      <span text-sm>Loading user profile...</span>
                     )}
                   </div>
                 ))
