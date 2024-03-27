@@ -10,6 +10,8 @@ import {
   playPreview,
   togglePostPlaying,
 } from "@/components/postFunctions";
+import { setDefaultAutoSelectFamily } from "net";
+import { setDefaultHighWaterMark } from "stream";
 
 export default function Feed({ params }: { params: { id: string } }) {
   const spotifyId = params.id;
@@ -167,10 +169,28 @@ export default function Feed({ params }: { params: { id: string } }) {
           `http://localhost:3000/api/feed/post/${postID}`,
           { action: "addALike" }
         );
+        console.log("go go",changingLikeResponse); 
+        if(changingLikeResponse.status === 200){
+          try{
+          const lettingItNow = await axios.post(`http://localhost:3000/api/notifications`, 
+            {
+              method: "addNotif", 
+              postId: postID,
+              userId: findSpotifyIdById(postID), 
+              Type: "Like",
+              FromUserId: spotifyId,
+              Time: new Date() 
+            }
+          )
+          console.log("hello",lettingItNow)
+        }catch(error){
+          console.error("Unable to make the changes"); 
+        }
         const updatedLikes = changingLikeResponse.data.likes;
         const updatedPosts = [...posts];
         updatedPosts[likedIndex].likes = updatedLikes;
         setPosts(updatedPosts);
+        }
       } catch (error) {
         console.error("Unable to make the changes");
       }
@@ -198,7 +218,15 @@ export default function Feed({ params }: { params: { id: string } }) {
       content: theInfo,
       numberOfLikes: 0,
     };
+    console.log("please look here", commentData)
+    console.log("look here", params.id)
+    console.log("heyyyy", posts)
+    http://localhost:3000/api/notifications api-> 
+    // like button -> 
+      // postId, userId (kenzy the person that made post), FromUserid (nessma-person making like), Type (Like), Time(date)
+    // postId, userId (kenzy the person that made post), FromUserid (nessma-person making comment), Type (comment),Text(what commented), Time(date) 
 
+    console.log(commentData)
     try {
       console.log("we have also entered");
       const theChanges = await axios.post(
@@ -219,6 +247,23 @@ export default function Feed({ params }: { params: { id: string } }) {
               commentId: commentOfId,
             }
           );
+          console.log(addingToTheRest)
+          if(addingToTheRest.status){
+            const addingToRest = await axios.post(
+              `http://localhost:3000/api/notifications`, {
+                method: "addNotif", 
+                postId: commentPostId,
+                userId: findSpotifyIdById(commentPostId), 
+                Type: "comment",
+                FromUserId: spotifyId,
+                Text: theInfo, 
+                Time: new Date() 
+              }
+            )
+            console.log(findSpotifyIdById(commentPostId))
+            console.log("success",addingToRest)
+          }
+          
         } catch (error) {
           console.error("Oops there is an error for the other", error);
         }
@@ -229,6 +274,15 @@ export default function Feed({ params }: { params: { id: string } }) {
 
     // if it has passed
   };
+
+  function findSpotifyIdById(_id : number) {
+    for (const post of posts) {
+      if (post._id === _id) {
+        return post.spotifyId;
+      }
+    }
+    return null; // Return null if _id is not found
+  }
 
   const handleSubmitComment = async (event: React.FormEvent) => {
     event.preventDefault();

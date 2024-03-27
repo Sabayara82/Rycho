@@ -5,6 +5,7 @@ import axios from "axios";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import NotificationDisplay from "../app/notifications/page"
 
 const Nav = () => {
   const router = useRouter();
@@ -106,12 +107,7 @@ const Nav = () => {
             </div>
           </div>
           <div className="transition duration-500 border-2 border-white-500 hover:border-[#202020] bg-[#000000] rounded-full h-10 mt-2 w-10 mr-4 flex justify-center items-center cursor-pointer">
-            <Image
-              src="/notification.png"
-              alt="image not found"
-              width={32}
-              height={12}
-            />
+           <NotificationDisplay/>
           </div>
 
           <a
