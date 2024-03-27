@@ -31,7 +31,6 @@ export default function FollowingPage({ params }) {
             const response = await axios.get(`http://localhost:3000/api/users/profile?action=getFollowers&spotifyId=${params.id}`);
             const { followers } = response.data;
             setfollowerList(followers);
-            console.log("Test")
         } catch (error) {
             console.error("Error fetching following list: ", error);
         }

@@ -148,13 +148,10 @@ export default function Feed({ params }: { params: { id: string } }) {
     for (let i = 0; i < posts.length; i++) {
       noLikes.push(false);
     }
-    console.log(noLikes);
     setlikingInteraction(noLikes);
   };
 
   const sendTheLikes = async (likedIndex: number) => {
-    console.log(likingInteraction);
-    console.log("this is the liking interaction", likedIndex);
     const newLikingInteraction = [...likingInteraction];
     newLikingInteraction[likedIndex] = !newLikingInteraction[likedIndex];
     setlikingInteraction(newLikingInteraction);
@@ -199,17 +196,13 @@ export default function Feed({ params }: { params: { id: string } }) {
     };
   
     try {
-      console.log("we have also entered");
       const theChanges = await axios.post(
         `http://localhost:3000/api/feed/comments`,
         commentData
       );
-      console.log("Able to populate");
       // Ensure that the server sends back the saved comment object
       const savedComment = theChanges.data.savedComment;
-      console.log("look here pls", savedComment._id);
       if (theChanges.status === 200) {
-        console.log(savedComment._id);
         try {
           const addingToTheRest = await axios.patch(
             `http://localhost:3000/api/feed/comments`,

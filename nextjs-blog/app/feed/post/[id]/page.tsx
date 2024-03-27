@@ -220,8 +220,6 @@ export default function PostPage({ params }: { params: { id: string } }) {
           roomStat: false,
           comments: [],
         });
-
-        console.log("Song posted successfully:", response.data);
       } catch (error) {
         console.error("Error posting song:", error);
       }

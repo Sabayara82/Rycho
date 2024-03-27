@@ -8,7 +8,6 @@ export async function POST(request: NextRequest) {
     const req = await request.json()    
     try {
         await connect('users')
-        console.log(req)
         const { spotifyId, username, followers, following } = req;
         const existingUser = await User.findOne({ spotifyId });
 
