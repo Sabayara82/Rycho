@@ -86,22 +86,6 @@ export default function PostPage({ params }: { params: { id: string } }) {
     }
   };
 
-  // Example function to toggle the boolean value for a specific post ID
-  const togglePostPlaying = (postId: string) => {
-    setPostPlaying((prevState) => ({
-      ...prevState,
-      [postId]: !prevState[postId], // Toggle the boolean value for the given postId
-    }));
-  };
-
-  const resetPostPlayingExcept = (postIdToExclude: string) => {
-    const updatedPostPlaying: { [postId: string]: boolean } = {};
-    Object.keys(postPlaying).forEach((postId) => {
-      updatedPostPlaying[postId] =
-        postId === postIdToExclude ? postPlaying[postId] : false;
-    });
-    setPostPlaying(updatedPostPlaying);
-  };
 
 
 
@@ -346,7 +330,7 @@ export default function PostPage({ params }: { params: { id: string } }) {
           {/* Button to go back */}
             <button
               onClick={handleBackToAlbums}
-              className="mb-4 ml-4 w-10 h-10 bg-gray-00 text-white rounded-full hover:bg-gray-600 items-center justify-center focus:outline-none focus:ring-2 focus:text-black"
+              className="mb-4 ml-4 w-10 h-10 bg-gray-00 text-white rounded-full bg-gray-600 items-center justify-center focus:outline-none focus:ring-2 focus:text-black"
             >
               <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 inline-block align-middle" viewBox="0 0 20 20" fill="currentColor">
                 <path fillRule="evenodd" d="M12.293 3.293a1 1 0 011.414 1.414L7.414 10l6.293 6.293a1 1 0 01-1.414 1.414l-7-7a1 1 0 010-1.414l7-7a1 1 0 011.414 0z" clipRule="evenodd" />
@@ -366,10 +350,12 @@ export default function PostPage({ params }: { params: { id: string } }) {
                     className={`cursor-pointer mb-2 flex items-center ${selectedSong === song ? 'bg-gray-400' : ''}`}
                     onClick={() => {
                       setSelectedSong(prevSong => (prevSong === song ? null : song));
+                      playPreview(song.audioUrl);
+                      
                     }}
                   >
-                  {/* Post button */}
-                  {selectedSong === song && (
+                    {/* Post button */}
+                    {selectedSong === song && (
                       <button
                         className="mr-2 text-white focus:outline-none group-hover:opacity-100 transition-opacity"
                         onClick={(e) => {
@@ -385,28 +371,6 @@ export default function PostPage({ params }: { params: { id: string } }) {
                       <p className={`text-base font-semibold text-black${selectedSong === song ? 'text-gray-800' : ''}`}>{song.name}</p>
                       <p className={`text-xs text-black${selectedSong === song ? 'text-gray-800' : ''}`}>{song.artist}</p>
                     </div>
-                    {/* Play/pause button */}
-                    <button
-                      className="ml-auto mr-4 text-gray-600 focus:outline-none"
-                      onClick={(e) => {
-                        e.stopPropagation(); // Prevent the row selection event from triggering
-                        playPreview(song.audioUrl);
-                      }}
-                    >
-                      {/* SVG triangle icon for play button with rounder tips */}
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        {selectedSong === song ? (
-                          // Three lines for pause
-                          <>
-                            <rect x="4" y="6" width="4" height="12" />
-                            <rect x="14" y="6" width="4" height="12" />
-                          </>
-                        ) : (
-                          // Play triangle with rounder tips
-                          <path  strokeLinejoin="round" strokeWidth={2} d="M4 6l16 6-16 6z" />
-                        )}
-                      </svg>
-                    </button>
                   </li>
                 ))}
             </ul>
