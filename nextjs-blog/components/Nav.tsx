@@ -72,7 +72,9 @@ const Nav = () => {
           width={30}
           height={30}
         /> */}
-        <p className="font-bebas-neue-regular text-4xl tracking-wider pl-4  text-black">Rycho</p>
+        <p className="font-bebas-neue-regular text-4xl tracking-wider pl-4  text-black">
+          Rycho
+        </p>
       </a>
       {token && (
         <div className="flex justify-end ">
@@ -87,7 +89,10 @@ const Nav = () => {
                 />
               </div>
               {activeSearch.length > 0 && (
-                <div className="absolute top-14 p-4 bg-[#383838] text-white w-full rounded-xl left-24 ml-2 -translate-x-1/2 flex flex-col gap-2 max-w-52">
+                <div
+                  className="absolute top-14 p-4 bg-[#383838] text-white w-full rounded-xl left-24 ml-2 -translate-x-1/2 flex flex-col gap-2 max-w-52"
+                  style={{ zIndex: 999 }}
+                >
                   {activeSearch.map((s) => (
                     <span
                       key={s.spotifyId}
