@@ -39,27 +39,17 @@ export default function PostPage({ params }: { params: { id: string } }) {
   const [showPopup, setShowPopup] = useState(false);
   const [caption, setCaption] = useState('');
   const [topSongs, setTopSongs] = useState<Song[]>([]);
-  const [hoveredSong, setHoveredSong] = useState<null | number>(null);
-
-
+  // const [hoveredSong, setHoveredSong] = useState<null | number>(null);
+  const [postPlaying, setPostPlaying] = useState<{ [postId: string]: boolean }>(
+    {}
+  );
+  const [hoveredSong, setHoveredSong] = useState<Song | null>(null); 
   const filteredAlbums = playlists.filter((playlist) =>
     playlist.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const playPreview = (audioUrl: string) => {
-    if (audioPlayer) {
-      if (audioPlayer.src !== audioUrl) {
-        audioPlayer.src = audioUrl;
-        audioPlayer.play();
-      } else {
-        if (audioPlayer.paused) {
-          audioPlayer.play();
-        } else {
-          audioPlayer.pause();
-        }
-      }
-    }
-  };
+  const [hoveredPostId, setHoveredPostId] = useState(null);
+
 
   useEffect(() => {
     const newAudioPlayer = new Audio();
@@ -68,10 +58,54 @@ export default function PostPage({ params }: { params: { id: string } }) {
     return () => {
       if (newAudioPlayer) {
         newAudioPlayer.pause();
-        newAudioPlayer.src = '';
+        newAudioPlayer.src = "";
       }
     };
   }, []);
+
+  const playPreview = (audioUrl: string) => {
+    if (audioPlayer) {
+      audioPlayer.addEventListener("error", (e) => {
+        console.error("Error with audio playback:", e);
+      });
+
+      if (audioPlayer.src !== audioUrl) {
+        audioPlayer.src = audioUrl;
+        audioPlayer
+          .play()
+          .catch((e) => console.error("Error playing the audio:", e));
+      } else {
+        if (audioPlayer.paused) {
+          audioPlayer
+            .play()
+            .catch((e) => console.error("Error playing the audio:", e));
+        } else {
+          audioPlayer.pause();
+        }
+      }
+    }
+  };
+
+  // Example function to toggle the boolean value for a specific post ID
+  const togglePostPlaying = (postId: string) => {
+    setPostPlaying((prevState) => ({
+      ...prevState,
+      [postId]: !prevState[postId], // Toggle the boolean value for the given postId
+    }));
+  };
+
+  const resetPostPlayingExcept = (postIdToExclude: string) => {
+    const updatedPostPlaying: { [postId: string]: boolean } = {};
+    Object.keys(postPlaying).forEach((postId) => {
+      updatedPostPlaying[postId] =
+        postId === postIdToExclude ? postPlaying[postId] : false;
+    });
+    setPostPlaying(updatedPostPlaying);
+  };
+
+
+
+
   useEffect(() => {
     if (token) {
       fetchTopSongs(token);
@@ -225,6 +259,8 @@ export default function PostPage({ params }: { params: { id: string } }) {
     setShowPopup(false);
   };
 
+
+
   return (
     <div className="flex flex-col items-center m-4">
       <div className="mb-4">
@@ -244,43 +280,44 @@ export default function PostPage({ params }: { params: { id: string } }) {
       {/* Top Songs */}
       <div>
         <h2 className="text-2xl text-black font-bold mb-4">Top Songs</h2>
-        <div className="grid grid-cols-2 gap-4">
-          {topSongs.slice(0, 6).map((song, index) => (
-            <div 
-              key={index} 
-              className={`song-row relative flex items-center space-x-4 mb-4 cursor-pointer w-full max-w-screen-lg ${selectedSong === song ? 'bg-gray-400' : ''}`}
-              onClick={() => setSelectedSong(prevSong => (prevSong === song ? null : song))}
-            >
-              {/* Number */}
-              <div className="font-bold text-xl text-gray-600">{index + 1}</div>
-              {/* Post button */}
-              {selectedSong === song && (
-                
-                <button
-                  className="mr-2 text-white focus:outline-none group-hover:opacity-100 transition-opacity"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setShowPopup(true);
-                  }}
-                >
-                  POST
-                </button>
-              )}
-              {/* Image */}
-              <div className={`w-20 h-20 rounded-md ${selectedSong === song ? 'ml-auto' : ''}`}>
-                <img src={song.image} alt={song.name} />
+          <div className="grid grid-cols-2 gap-4">
+            {topSongs.slice(0, 6).map((song, index) => (
+              <div 
+                key={index} 
+                className={`song-row relative flex items-center space-x-4 mb-4 cursor-pointer w-full max-w-screen-lg ${selectedSong === song ? 'bg-gray-400' : ''}`}
+                onClick={() => {
+                  setSelectedSong(prevSong => (prevSong === song ? null : song));
+                  playPreview(song.audioUrl); // Call playPreview function when a song is selected
+                }}
+              >
+                {/* Number */}
+                <div className="font-bold text-xl text-gray-600">{index + 1}</div>
+                {/* Post button */}
+                {selectedSong === song && (
+                  <button
+                    className="mr-2 text-white focus:outline-none group-hover:opacity-100 transition-opacity"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setShowPopup(true);
+                    }}
+                  >
+                    POST
+                  </button>
+                )}
+                {/* Image */}
+                <div className={`w-20 h-20 rounded-md ${selectedSong === song ? 'ml-auto' : ''}`}>
+                  <img src={song.image} alt={song.name} />
+                </div>
+                <div className="flex flex-col">
+                  {/* Song title */}
+                  <div className={`font-bold ${selectedSong === song ? 'text-white' : 'text-black'}`}>{song.name}</div>
+                  {/* Artist */}
+                  <div className={selectedSong === song ? 'text-white' : 'text-black'}>{song.artist}</div>
+                </div>
               </div>
-              <div className="flex flex-col">
-                {/* Song title */}
-                <div className={`font-bold ${selectedSong === song ? 'text-white' : 'text-black'}`}>{song.name}</div>
-                {/* Artist */}
-                <div className={selectedSong === song ? 'text-white' : 'text-black'}>{song.artist}</div>
-              </div>
-              
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
-      </div> 
           {/* Albums */}
             <div className="flex flex-wrap justify-center items-center mt-8"> 
               {filteredAlbums.map((playlist, index) => (
