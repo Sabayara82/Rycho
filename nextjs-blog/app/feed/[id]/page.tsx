@@ -11,6 +11,8 @@ export default function Feed({params} : {params: {id: string}}) {
     const [ableFeed, setableFeed] = useState<boolean>(true); 
     const [userNames, setUserNames] = useState<Map<string, string>>(new Map());
     const [likingInteraction, setlikingInteraction] = useState<boolean[]>([]); 
+    const [newComment, setNewComment] = useState("");
+    const [commentPostId, setcommentPostId] = useState(0);
 
 
   
@@ -127,8 +129,9 @@ export default function Feed({params} : {params: {id: string}}) {
       window.location.href = `http://localhost:3000/profile/${userIndexx}`;
     };
 
-    const addAcomment = async (theInfo: number) => {
+    const addAcomment = async (theInfo: string) => {
       let commentData = {
+        postId: commentPostId , 
         spotifyId: spotifyId,
         numberOfLikes: 0,
         content: theInfo,
@@ -137,7 +140,7 @@ export default function Feed({params} : {params: {id: string}}) {
       };
 
       try{
-        const theChanges = await axios.post("/api/users/comments", {
+        const theChanges = await axios.post("/api/comments", {
           body: commentData
         });
         console.log("Able to populate")
@@ -146,7 +149,21 @@ export default function Feed({params} : {params: {id: string}}) {
         console.log("Oops we were unable to populate")
       }
     }
-  
+
+    const handleSubmitComment = async (event: React.FormEvent) => {
+      event.preventDefault(); 
+      setNewComment
+      try {
+        await addAcomment(newComment);
+      } catch (error) {
+        console.error("Error adding comment:", error);
+      }
+    };
+
+    const handleCommentChange = (event: React.ChangeEvent<HTMLTextAreaElement>, index: number) =>{
+      setNewComment(event.target.value); 
+      setcommentPostId(posts[index].postId); 
+    }
 
 
     return (
@@ -185,6 +202,16 @@ export default function Feed({params} : {params: {id: string}}) {
                   <button className="bg-blue-500 text-white px-4 py-2 rounded-md">
                     Comments
                   </button>
+                  <form onSubmit={handleSubmitComment} className="mt-4">
+                    <textarea
+                      value={newComment}
+                      onChange={(event) => handleCommentChange(event, index)}
+                      placeholder="Write a comment..."
+                      className="w-full p-2 rounded-md border"
+                      rows={3}
+                    />
+                    <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded-md mt-2">Post Comment</button>
+                  </form>
                 </div>
               </div>
             ))
