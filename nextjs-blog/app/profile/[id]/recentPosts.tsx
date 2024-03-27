@@ -41,14 +41,18 @@ export default function RecentPosts({
   const [refreshPosts, setRefreshPosts] = useState(false);
 
   const [audioPlayer, setAudioPlayer] = useState<HTMLAudioElement | null>(null);
-  const [isPlaying, setIsPlaying] = useState(true);
+
+  const [postPlaying, setPostPlaying] = useState<{ [postId: string]: boolean }>(
+    {}
+  );
   const [hoveredPostId, setHoveredPostId] = useState(null);
-  
+
   const router = useRouter();
 
   useEffect(() => {
     if (token && spotifyId) {
       fetchPosts();
+      resetPostPlayingExcept("");
     }
   }, [token, spotifyId, refreshPosts]);
 
@@ -72,7 +76,6 @@ export default function RecentPosts({
 
       const { allPosts } = response.data;
       allOfThePosts.push(...allPosts);
-      // setPosts(allPosts);
     } catch (error) {
       console.error("Error fetching user's posts': ", error);
     }
@@ -81,6 +84,7 @@ export default function RecentPosts({
       .sort((a, b) => a.updatedAt - b.updatedAt)
       .reverse();
     setPosts(sortedPosts);
+
     console.log(sortedPosts.length);
   };
 
@@ -207,7 +211,23 @@ export default function RecentPosts({
       }
     }
   };
-  
+
+  // Example function to toggle the boolean value for a specific post ID
+  const togglePostPlaying = (postId: string) => {
+    setPostPlaying((prevState) => ({
+      ...prevState,
+      [postId]: !prevState[postId], // Toggle the boolean value for the given postId
+    }));
+  };
+
+  const resetPostPlayingExcept = (postIdToExclude: string) => {
+    const updatedPostPlaying: { [postId: string]: boolean } = {};
+    Object.keys(postPlaying).forEach((postId) => {
+      updatedPostPlaying[postId] =
+        postId === postIdToExclude ? postPlaying[postId] : false;
+    });
+    setPostPlaying(updatedPostPlaying);
+  };
 
   return (
     <div className="min-h-screen bg-transparent rounded-lg">
@@ -219,67 +239,60 @@ export default function RecentPosts({
           >
             <div
               className="flex relative ml-auto mr-4 lg:content-left"
-              onMouseEnter={() => {
-                if (hoveredPostId !== post._id) {setIsPlaying(!isPlaying)}
-                setHoveredPostId(post._id)
-              }}
-              onMouseLeave={() => {
-                // if (hoveredPostId === post._id) {setIsPlaying(false)}
-                setHoveredPostId(null)
-              }}
+              onMouseEnter={() => {setHoveredPostId(post._id);}}
+              onMouseLeave={() => {setHoveredPostId(null);}}
             >
               <button
                 className="text-gray-600 focus:outline-none"
                 onClick={(e) => {
-                  if (hoveredPostId !== post._id) {setIsPlaying(false)}
                   e.stopPropagation();
                   playPreview(post.audioURL);
-                  setIsPlaying(!isPlaying); // Toggle play state
-                  console.log("IsPlaying " + isPlaying);
+                  resetPostPlayingExcept(post._id);
+                  togglePostPlaying(post._id); // Toggle the boolean value for the post ID
                 }}
               >
                 {/* Overlay appears on hover */}
-                {(hoveredPostId === post._id) && (
-                    <div className="absolute inset-0 flex justify-center items-center z-10">
+                {hoveredPostId === post._id && (
+                  <div className="absolute inset-0 flex justify-center items-center z-10">
                     {/* Conditionally show play or pause icon */}
-                    {isPlaying ? (
+                    {postPlaying[post._id] ? (
                       <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-36 w-36" // Adjusted size for visibility
-                      viewBox="0 0 24 24"
-                      fill="none" // Changed to 'none' for play/pause icons
-                      stroke="white" // Changed stroke color for better visibility
-                    >
-                      {/* Pause Icon */}
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M10 9v6m4-6v6"
-                      />
-                    </svg>
-                  ) : (
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-36 w-36" // Adjusted size for visibility
-                      viewBox="0 0 24 24"
-                      fill="none" // Changed to 'none' for play/pause icons
-                      stroke="white" // Changed stroke color for better visibility
-                    >
-                      {/* Play Icon */}
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"
-                      />
-                    </svg>
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-36 w-36" // Adjusted size for visibility
+                        viewBox="0 0 24 24"
+                        fill="none" // Changed to 'none' for play/pause icons
+                        stroke="white" // Changed stroke color for better visibility
+                      >
+                        {/* Pause Icon */}
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M10 9v6m4-6v6"
+                        />
+                      </svg>
+                    ) : (
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-36 w-36" // Adjusted size for visibility
+                        viewBox="0 0 24 24"
+                        fill="none" // Changed to 'none' for play/pause icons
+                        stroke="white" // Changed stroke color for better visibility
+                      >
+                        {/* Play Icon */}
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"
+                        />
+                      </svg>
                     )}
-                    </div>
+                  </div>
                 )}
                 <Image
                   className={`bg-[#ffffff] mr-2 rounded-lg min-w-[150px] max-w-[200px] ${
-                    (hoveredPostId===post._id) ? "opacity-50" : "opacity-100"
+                    hoveredPostId === post._id ? "opacity-50" : "opacity-100"
                   }`}
                   src={post.imageURL || "/imageplaceholder.png"}
                   alt="User"
@@ -319,10 +332,9 @@ export default function RecentPosts({
                 <div
                   className="cursor-pointer"
                   onClick={() => {
-                    
                     setVisibleCommentsPostId(
                       visibleCommentsPostId !== post._id ? post._id : null
-                    )
+                    );
                   }}
                 >
                   Comments: {comments[post._id] ? comments[post._id].length : 0}
