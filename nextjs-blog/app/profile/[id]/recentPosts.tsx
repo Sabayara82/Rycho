@@ -4,6 +4,14 @@ import axios from "axios";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
+import {
+  fetchPosts,
+  goToUserPage,
+  fetchComments,
+  playPreview,
+  togglePostPlaying,
+} from "@/components/postFunctions";
+import { set } from "mongoose";
 
 export default function RecentPosts({
   params,
@@ -49,67 +57,48 @@ export default function RecentPosts({
 
   const router = useRouter();
 
+  // useEffect to fetch posts when the component mounts
   useEffect(() => {
     if (token && spotifyId) {
-      fetchPosts();
+      fetchPosts(spotifyId, token, setPosts);
       resetPostPlayingExcept("");
     }
   }, [token, spotifyId, refreshPosts]);
 
+  // useEffect to fetch comments when posts are shown
   useEffect(() => {
     if (posts.length > 0) {
-      fetchComments();
+      fetchComments(posts, token, setComments);
     }
   }, [posts]);
 
-  const fetchPosts = async () => {
-    const allOfThePosts = [];
-    try {
-      const response = await axios.get(
-        `http://localhost:3000/api/feed/post/?spotifyId=${spotifyId}`,
-        {
-          headers: {
-            Authorization: "Bearer " + token,
-          },
-        }
-      );
-
-      const { allPosts } = response.data;
-      allOfThePosts.push(...allPosts);
-    } catch (error) {
-      console.error("Error fetching user's posts': ", error);
-    }
-
-    const sortedPosts = allOfThePosts
-      .sort((a, b) => a.updatedAt - b.updatedAt)
-      .reverse();
-    setPosts(sortedPosts);
-
-    console.log(sortedPosts.length);
-  };
-
-  const fetchComments = async () => {
-    try {
-      const commentsMap: { [postId: string]: any[] } = {}; // Define type annotation for commentsMap
-      for (let i = 0; i < posts.length; i++) {
-        const postId = posts[i]._id;
-        const response = await axios.get(
-          `http://localhost:3000/api/feed/comments/?postId=${postId}`,
-          {
-            headers: {
-              Authorization: "Bearer " + token,
-            },
+  // useEffect to prefetch profiles when comments are shown (optional optimization)
+  useEffect(() => {
+    const prefetchProfiles = async () => {
+      if (visibleCommentsPostId && comments[visibleCommentsPostId]) {
+        const commentList = comments[visibleCommentsPostId];
+        for (const comment of commentList) {
+          if (!userProfiles[comment.spotifyId]) {
+            await fetchUserProfile(comment.spotifyId); // Prefetch and cache
           }
-        );
-        const { allComments } = response.data;
-        commentsMap[postId] = allComments; // Assign comments to the post ID key in the comments map
+        }
       }
+    };
+    prefetchProfiles();
+  }, [visibleCommentsPostId, comments, userProfiles]);
 
-      setComments(commentsMap); // Set comments map to state
-    } catch (error) {
-      console.error("Error fetching posts' comments: ", error);
-    }
-  };
+  // useEffect to create an audio player when the component mounts
+  useEffect(() => {
+    const newAudioPlayer = new Audio();
+    setAudioPlayer(newAudioPlayer);
+
+    return () => {
+      if (newAudioPlayer) {
+        newAudioPlayer.pause();
+        newAudioPlayer.src = "";
+      }
+    };
+  }, []);
 
   const fetchUserProfile = async (id: string) => {
     // Return cached profile if available
@@ -141,24 +130,15 @@ export default function RecentPosts({
     }
   };
 
-  // useEffect to prefetch profiles when comments are shown (optional optimization)
-  useEffect(() => {
-    const prefetchProfiles = async () => {
-      if (visibleCommentsPostId && comments[visibleCommentsPostId]) {
-        const commentList = comments[visibleCommentsPostId];
-        for (const comment of commentList) {
-          if (!userProfiles[comment.spotifyId]) {
-            await fetchUserProfile(comment.spotifyId); // Prefetch and cache
-          }
-        }
-      }
-    };
-    prefetchProfiles();
-  }, [visibleCommentsPostId, comments, userProfiles]);
-
-  const goToUserPage = async (index: string) => {
-    window.location.href = `http://localhost:3000/profile/${index}`;
-  };
+  function confirmDelete(postId: string) {
+    const confirmation = window.confirm(
+      "Are you sure you want to delete this post?"
+    );
+    if (confirmation) {
+      // Call the deletePost function if user confirms
+      deletePost(postId);
+    }
+  }
 
   const deletePost = async (postId: string) => {
     try {
@@ -177,50 +157,7 @@ export default function RecentPosts({
     }
   };
 
-  useEffect(() => {
-    const newAudioPlayer = new Audio();
-    setAudioPlayer(newAudioPlayer);
-
-    return () => {
-      if (newAudioPlayer) {
-        newAudioPlayer.pause();
-        newAudioPlayer.src = "";
-      }
-    };
-  }, []);
-
-  const playPreview = (audioUrl: string) => {
-    if (audioPlayer) {
-      audioPlayer.addEventListener("error", (e) => {
-        console.error("Error with audio playback:", e);
-      });
-
-      if (audioPlayer.src !== audioUrl) {
-        audioPlayer.src = audioUrl;
-        audioPlayer
-          .play()
-          .catch((e) => console.error("Error playing the audio:", e));
-      } else {
-        if (audioPlayer.paused) {
-          audioPlayer
-            .play()
-            .catch((e) => console.error("Error playing the audio:", e));
-        } else {
-          audioPlayer.pause();
-        }
-      }
-    }
-  };
-
-  // Example function to toggle the boolean value for a specific post ID
-  const togglePostPlaying = (postId: string) => {
-    setPostPlaying((prevState) => ({
-      ...prevState,
-      [postId]: !prevState[postId], // Toggle the boolean value for the given postId
-    }));
-  };
-
-  const resetPostPlayingExcept = (postIdToExclude: string) => {
+  const resetPostPlayingExcept = async (postIdToExclude: string) => {
     const updatedPostPlaying: { [postId: string]: boolean } = {};
     Object.keys(postPlaying).forEach((postId) => {
       updatedPostPlaying[postId] =
@@ -238,17 +175,25 @@ export default function RecentPosts({
             className="flex flex-col lg:flex-row  bg-zinc-800  justify-between pl-10 w-full max-w-none mx-auto p-8 mb-4 shadow-lg rounded-lg  border-black border-4"
           >
             <div
-              className="flex relative ml-auto mr-4 lg:content-left"
-              onMouseEnter={() => {setHoveredPostId(post._id);}}
-              onMouseLeave={() => {setHoveredPostId(null);}}
+              className="flex relative  justify-center"
+              onMouseEnter={() => {
+                setHoveredPostId(post._id);
+              }}
+              onMouseLeave={() => {
+                setHoveredPostId(null);
+              }}
             >
               <button
                 className="text-gray-600 focus:outline-none"
                 onClick={(e) => {
                   e.stopPropagation();
-                  playPreview(post.audioURL);
+                  playPreview(audioPlayer, post.audioURL);
                   resetPostPlayingExcept(post._id);
-                  togglePostPlaying(post._id); // Toggle the boolean value for the post ID
+                  togglePostPlaying(
+                    setPostPlaying,
+                    postPlaying.prevState,
+                    post._id
+                  ); // Toggle the boolean value for the post ID
                 }}
               >
                 {/* Overlay appears on hover */}
@@ -302,7 +247,7 @@ export default function RecentPosts({
                 />
               </button>
             </div>
-            <div className="flex flex-col justify-center items-center mx-auto pl-2 w-2/6 text-center">
+            <div className="flex flex-col justify-center items-center mx-auto pl-2 pt-4  w-2/6 text-center ">
               <h2 className="text-xl drop-shadow-[2px_2px_rgba(100,149,237,0.8)] uppercase font-semibold text-white hover:text-gray-200">
                 <a href={post.albumURL} target="_blank">
                   {post.songName}
@@ -420,7 +365,8 @@ export default function RecentPosts({
                   No comments available
                 </p>
               ) : null}
-              <button onClick={() => deletePost(post._id)}>
+
+              <button onClick={() => confirmDelete(post._id)}>
                 <div className="h-full pt-10 flex justify-end ">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
