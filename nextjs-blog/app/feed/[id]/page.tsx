@@ -191,14 +191,13 @@ export default function Feed({ params }: { params: { id: string } }) {
   };
 
   const addAComment = async (theInfo: string) => {
-    //lets see how this will work umm lol
     const commentData = {
       postId: commentPostId,
       spotifyId: spotifyId,
       content: theInfo,
       numberOfLikes: 0,
     };
-
+  
     try {
       console.log("we have also entered");
       const theChanges = await axios.post(
@@ -206,17 +205,17 @@ export default function Feed({ params }: { params: { id: string } }) {
         commentData
       );
       console.log("Able to populate");
-      const commentOfId = theChanges.savedComment;
-      console.log("look here pls", theChanges.data.savedComment._id);
+      // Ensure that the server sends back the saved comment object
+      const savedComment = theChanges.data.savedComment;
+      console.log("look here pls", savedComment._id);
       if (theChanges.status === 200) {
-        const commentOfId = theChanges.data.savedComment._id;
-        console.log(commentOfId);
+        console.log(savedComment._id);
         try {
           const addingToTheRest = await axios.patch(
             `http://localhost:3000/api/feed/comments`,
             {
               postId: commentPostId,
-              commentId: commentOfId,
+              commentId: savedComment._id,
             }
           );
         } catch (error) {
@@ -226,9 +225,8 @@ export default function Feed({ params }: { params: { id: string } }) {
     } catch (error) {
       console.error("oops there is an error", error);
     }
-
-    // if it has passed
   };
+  
 
   const handleSubmitComment = async (event: React.FormEvent) => {
     event.preventDefault();
