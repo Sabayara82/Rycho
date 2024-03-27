@@ -197,7 +197,7 @@ export default function PostPage({ params }: { params: { id: string } }) {
           artistName: selectedSong.artist, 
           imageURL: selectedSong.image, 
           audioURL: selectedSong.audioUrl, 
-          caption: "", 
+          caption: caption, 
           likes: 0,
           roomStat: false,
           comments: [],
@@ -249,14 +249,13 @@ export default function PostPage({ params }: { params: { id: string } }) {
             <div 
               key={index} 
               className={`song-row relative flex items-center space-x-4 mb-4 cursor-pointer w-full max-w-screen-lg ${selectedSong === song ? 'bg-gray-400' : ''}`}
-
-
               onClick={() => setSelectedSong(prevSong => (prevSong === song ? null : song))}
             >
               {/* Number */}
               <div className="font-bold text-xl text-gray-600">{index + 1}</div>
               {/* Post button */}
               {selectedSong === song && (
+                
                 <button
                   className="mr-2 text-white focus:outline-none group-hover:opacity-100 transition-opacity"
                   onClick={(e) => {
@@ -277,10 +276,7 @@ export default function PostPage({ params }: { params: { id: string } }) {
                 {/* Artist */}
                 <div className={selectedSong === song ? 'text-white' : 'text-black'}>{song.artist}</div>
               </div>
-              {/* Song selection */}
-              <div
-                className="absolute inset-0"
-              ></div>
+              
             </div>
           ))}
         </div>
@@ -303,7 +299,9 @@ export default function PostPage({ params }: { params: { id: string } }) {
               ))}
             </div>
           </>
+          
         )}
+        
         {!showAlbums && (
           // Render songs of selected album only
           <div className="flex flex-col items-center m-4">
