@@ -168,7 +168,6 @@ export default function RecentPosts({
 
   return (
     <div className="min-h-screen bg-transparent rounded-lg">
-    <div className="min-h-screen bg-transparent rounded-lg">
       {posts.length > 0 ? (
         posts.map((post) => (
           <div
