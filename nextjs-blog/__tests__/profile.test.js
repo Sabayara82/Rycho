@@ -15,13 +15,10 @@ describe("POST function", () => {
   test("adds a new user", async () => {
     // Mock request body
     const reqBody = {
-      method: "addUser",
-      body: {
         spotifyId: "someId",
         username: "someUsername",
         followers: [],
         following: []
-      }
     };
 
     // Mock request object
