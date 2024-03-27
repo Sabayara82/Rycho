@@ -140,7 +140,7 @@ export default function Feed({params} : {params: {id: string}}) {
       };
 
       try{
-        const theChanges = await axios.post("/api/comments", {
+        const theChanges = await axios.post("/api/feed/comments", {
           body: commentData
         });
         console.log("Able to populate")
