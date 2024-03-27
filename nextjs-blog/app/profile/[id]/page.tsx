@@ -16,6 +16,10 @@ export default function Home({ params }: { params: { id: string } }) {
   const [userName, setUserName] = useState<string | null>(null);
   const [userImage, setUserImage] = useState<string | null>(null);
   const [userIsFollowing, setUserFollowing] = useState<number>(0);
+  const [hasFavSong, sethasFavSong] = useState("No selected song"); 
+  const [hasFavsome, setAudioOfSong] = useState("No selected song"); 
+  const [hasPressed, setPressed] = useState(true); 
+
 
   useEffect(() => {
     let id = window.localStorage.getItem("spotifyid");
@@ -30,8 +34,19 @@ export default function Home({ params }: { params: { id: string } }) {
       fetchMyFollowing();
       fetchFollowers();
       fetchFollowing();
+      gettingFavSong();
+      startTing(); 
     }
-  }, [token]);
+  }, [token, hasFavsome, hasPressed]);
+
+  useEffect(() => {
+      const audioElement = new Audio(hasFavsome);
+      audioElement.play().catch(error => {
+        console.error("Autoplay prevented:", error);
+      });
+
+  }, []); 
+
 
   const fetchUserProfile = async () => {
     try {
@@ -146,10 +161,85 @@ export default function Home({ params }: { params: { id: string } }) {
     router.push("/feed/post/" + params.id);
   };
 
+  const selectFavSong = () => {
+    router.push("/favSong/" + params.id); 
+    
+  }; 
+
+  const gettingFavSong = async () => {
+    console.log("the spotify id", spotifyId)
+    console.log("the one that we use !!! ", params.id)
+    try{
+      const data = await axios.get(`http://localhost:3000/api/feed/theSong?spotifyId=${params.id}`)
+      sethasFavSong(data.data.favSong.songName);
+      setAudioOfSong(data.data.favSong.audioURL);
+      console.log("we are able to retrive",data); 
+
+    }catch(error){
+      sethasFavSong("No favourite song"); 
+      setAudioOfSong("NONE"); 
+    }
+  }
+
+  const startTing = async () => {
+    const audioElement = new Audio(hasFavsome);
+    console.log("eneterer", hasFavsome)
+    if(hasFavsome !== "NONE"){
+      if(hasPressed){
+        audioElement.play()
+        console.log("enter", hasFavsome)
+      }
+      else{
+        audioElement.pause();
+      }
+
+    }
+  }
+
+  const playingTheSong = () => {
+    console.log("pressed")
+    if(hasFavsome !== "NONE"){
+      if(hasPressed){
+        setPressed(false); 
+      }
+      else{
+        setPressed(true);
+      }
+    }
+  }
+
   return (
+    <div> 
+    <div className="fixed top-20 left-0 flex flex-col rounded-3xl justify-center items-start w-full p-4 z-50">
+      <button onClick={playingTheSong} className="flex items-center bg-black hover:bg-black text-white font-bold py-2 px-4 rounded">
+        {hasPressed && ("No favourite song" !== hasFavSong)? (
+          <img
+            src="https://media.discordapp.net/attachments/1200526434062565487/1222469996681101392/audio-spectrum-demo.gif?ex=661654e7&is=6603dfe7&hm=9052a73fb309ce21008148215458eb7f1569c7803393f8ea36c932e91103760a&=&width=960&height=540"
+            alt="Your GIF"
+            className="w-16 h-16 mr-2"
+          /> 
+        ) : null}
+        {hasPressed ? hasFavSong : "Play user's favorite song"}
+
+        
+      </button>
+    </div>
     <div className="flex min-h-screen flex-col bg-zinc-800 mt-20 max-w-7xl mx-auto rounded-3xl p-10 relative">
       <div className="absolute inset-0 bg-[url('/background.png')] bg-cover opacity-20 rounded-3xl"></div>
-      <div className="relative flex flex-col z-10">
+
+
+
+
+      <div className="relative flex flex-col z-10 mt-[50px]">
+        {spotifyId === params.id && (
+          <div className="favsong">
+            <button onClick={selectFavSong} className="bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded">
+              Edit Favourite Song
+            </button>
+          </div>
+        )}
+
+
         <div className="flex justify-between items-center mb-8">
           <h1 className="absolute left-1/2 -translate-x-1/2 text-4xl font-semibold pt-12">
             Profile
@@ -209,5 +299,7 @@ export default function Home({ params }: { params: { id: string } }) {
         <div className="fixed bottom-0 left-0 right-0 h-20 bg-gradient-to-b from-transparent to-black"></div>
       </div>
     </div>
+    </div>
   );
 }
+
