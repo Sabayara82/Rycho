@@ -1,9 +1,7 @@
-// import { TextEncoder, TextDecoder } from 'text-encoding';
 import { NextRequest, NextResponse } from "next/server";
 import { POST, PUT, DELETE, GET } from "@/app/api/users/profile/route"; 
 import User from "@/models/UserModel";
 
-// Mock the NextRequest and NextResponse modules
 jest.mock("next/server", () => ({
   NextRequest: jest.fn(),
   NextResponse: {
@@ -15,27 +13,25 @@ describe("POST function", () => {
   test("adds a new user", async () => {
     // Mock request body
     const reqBody = {
+      method: "addUser",
+      body: {
         spotifyId: "someId",
         username: "someUsername",
         followers: [],
         following: []
+      }
     };
-
-    // Mock request object
+    
     const request = new NextRequest();
     request.json = jest.fn().mockResolvedValue(reqBody);
 
-    // Mock existing user check
     const existingUser = null; // Mock that no user exists
-
-    // Mock User model methods
+    
     const findOneMock = jest.spyOn(User, "findOne").mockResolvedValue(existingUser);
     const saveMock = jest.spyOn(User.prototype, "save").mockResolvedValue({});
 
-    // Call the POST function with the mock request object
     await POST(request);
 
-    // Add your assertions here to verify the behavior of the POST function
     expect(findOneMock).toHaveBeenCalledWith({ spotifyId: reqBody.body.spotifyId });
     expect(saveMock).toHaveBeenCalled();
     expect(NextResponse.json).toHaveBeenCalledWith({
@@ -238,10 +234,151 @@ describe("GET function", () => {
 });
 
 
+describe("DELETE function", () => {
+  describe("removeFollowing action", () => {
+    test("removes a following user", async () => {
+      const reqBody = {
+        action: "removeFollowing",
+        spotifyId: "someId",
+        followUserId: "followingIdToRemove"
+      };
+    
+      const request = new NextRequest();
+      request.json = jest.fn().mockResolvedValue(reqBody);
+    
+      const user = { following: ["followingId1", "followingIdToRemove", "followingId2"] };
+      const findOneMock = jest.spyOn(User, "findOne").mockResolvedValue(user);
+      const saveMock = jest.spyOn(User.prototype, "save").mockResolvedValue({});
+    
+      await DELETE(request);
+    
+      expect(findOneMock).toHaveBeenCalledWith({ spotifyId: reqBody.spotifyId });
+      expect(user.following.includes(reqBody.followUserId)).toBe(false);
+      expect(saveMock).toHaveBeenCalled();
+      expect(NextResponse.json).toHaveBeenCalledWith({
+        message: "Following user removed successfully",
+        message: "User created successfully",
+        savedUser: {},
+        success: true
+      });
+    });
+    
+    test("handles user not found", async () => {
+      const reqBody = {
+        action: "removeFollowing",
+        spotifyId: "nonExistentId",
+        followUserId: "followingId1"
+      };
 
+      const request = new NextRequest();
+      request.json = jest.fn().mockResolvedValue(reqBody);
 
+      const findOneMock = jest.spyOn(User, "findOne").mockResolvedValue(null);
 
+      await DELETE(request);
 
+      expect(findOneMock).toHaveBeenCalledWith({ spotifyId: reqBody.spotifyId });
+      expect(NextResponse.json).toHaveBeenCalledWith({ error: "User not found" }, { status: 404 });
+    });
 
+    test("handles user not following", async () => {
+      const reqBody = {
+        action: "removeFollowing",
+        spotifyId: "someId",
+        followUserId: "nonExistingFollowingId"
+      };
 
+      const request = new NextRequest();
+      request.json = jest.fn().mockResolvedValue(reqBody);
 
+      const user = { following: ["followingId1", "followingId2"] };
+      const findOneMock = jest.spyOn(User, "findOne").mockResolvedValue(user);
+
+      await DELETE(request);
+
+      expect(findOneMock).toHaveBeenCalledWith({ spotifyId: reqBody.spotifyId });
+      expect(NextResponse.json).toHaveBeenCalledWith({ error: "User is not following this user" }, { status: 400 });
+    });
+  });
+
+  describe("removeFollower action", () => {
+    test("removes a follower user", async () => {
+      const reqBody = {
+        action: "removeFollower",
+        spotifyId: "someId",
+        followUserId: "followerIdToRemove"
+      };
+    
+      const request = new NextRequest();
+      request.json = jest.fn().mockResolvedValue(reqBody);
+    
+      const user = { followers: ["followerId1", "followerIdToRemove", "followerId2"] };
+      const findOneMock = jest.spyOn(User, "findOne").mockResolvedValue(user);
+      const saveMock = jest.spyOn(User.prototype, "save").mockResolvedValue({});
+    
+      await DELETE(request);
+    
+      expect(findOneMock).toHaveBeenCalledWith({ spotifyId: reqBody.spotifyId });
+      expect(user.followers.includes(reqBody.followUserId)).toBe(false);
+      expect(saveMock).toHaveBeenCalled();
+      expect(NextResponse.json).toHaveBeenCalledWith({
+        message: "Follower user removed successfully",
+        message: "User created successfully",
+        success: true,
+        savedUser: {}
+      });
+    });
+    
+    test("handles user not found", async () => {
+      const reqBody = {
+        action: "removeFollower",
+        spotifyId: "nonExistentId",
+        followUserId: "followerId1"
+      };
+
+      const request = new NextRequest();
+      request.json = jest.fn().mockResolvedValue(reqBody);
+
+      const findOneMock = jest.spyOn(User, "findOne").mockResolvedValue(null);
+
+      await DELETE(request);
+
+      expect(findOneMock).toHaveBeenCalledWith({ spotifyId: reqBody.spotifyId });
+      expect(NextResponse.json).toHaveBeenCalledWith({ error: "User not found" }, { status: 404 });
+    });
+
+    test("handles user not following", async () => {
+      const reqBody = {
+        action: "removeFollower",
+        spotifyId: "someId",
+        followUserId: "nonExistingFollowerId"
+      };
+
+      const request = new NextRequest();
+      request.json = jest.fn().mockResolvedValue(reqBody);
+
+      const user = { followers: ["followerId1", "followerId2"] };
+      const findOneMock = jest.spyOn(User, "findOne").mockResolvedValue(user);
+
+      await DELETE(request);
+
+      expect(findOneMock).toHaveBeenCalledWith({ spotifyId: reqBody.spotifyId });
+      expect(NextResponse.json).toHaveBeenCalledWith({ error: "User is not following this user" }, { status: 400 });
+    });
+  });
+
+  test("handles invalid action", async () => {
+    const reqBody = {
+      action: "invalidAction",
+      spotifyId: "someId",
+      followUserId: "someOtherId"
+    };
+
+    const request = new NextRequest();
+    request.json = jest.fn().mockResolvedValue(reqBody);
+
+    await DELETE(request);
+
+    expect(NextResponse.json).toHaveBeenCalledWith({ error: "Invalid action" }, { status: 400 });
+  });
+});
