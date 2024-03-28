@@ -220,8 +220,6 @@ export default function PostPage({ params }: { params: { id: string } }) {
           roomStat: false,
           comments: [],
         });
-
-        console.log("Song posted successfully:", response.data);
       } catch (error) {
         console.error("Error posting song:", error);
       }
@@ -303,7 +301,7 @@ export default function PostPage({ params }: { params: { id: string } }) {
           </div>
         </div>
           {/* Albums */}
-            <div className="flex flex-wrap justify-center items-center mt-8"> 
+            <div className="flex flex-wrap justify-center mt-8"> 
               {filteredAlbums.map((playlist, index) => (
                 <div
                   key={index}
@@ -315,7 +313,7 @@ export default function PostPage({ params }: { params: { id: string } }) {
                   }}
                 >
                   <img src={playlist.image} alt={playlist.name} className="w-40 h-40 object-cover rounded-lg mb-2" />
-                  <p className="text-center text-black">{playlist.name}</p>
+                  <p className="text-center text-black" style={{ maxWidth: '8em', wordWrap: 'break-word' }}>{playlist.name}</p>
                 </div>
               ))}
             </div>

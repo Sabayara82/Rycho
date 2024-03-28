@@ -152,7 +152,6 @@ export default function RecentPosts({
           },
         }
       );
-      console.log(response);
       setRefreshPosts((prev) => !prev);
     } catch (error) {
       console.error("Error deleting user's posts': ", error);

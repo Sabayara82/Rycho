@@ -42,7 +42,6 @@ export async function POST(request: NextRequest) {
       });
 
       const savedPost = await newPost.save();
-      console.log(savedPost);
 
       return NextResponse.json({
         message: "Post created successfully",

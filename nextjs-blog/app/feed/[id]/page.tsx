@@ -10,6 +10,8 @@ import {
   playPreview,
   togglePostPlaying,
 } from "@/components/postFunctions";
+import { setDefaultAutoSelectFamily } from "net";
+import { setDefaultHighWaterMark } from "stream";
 
 export default function Feed({ params }: { params: { id: string } }) {
   const spotifyId = params.id;
@@ -149,13 +151,10 @@ export default function Feed({ params }: { params: { id: string } }) {
     for (let i = 0; i < posts.length; i++) {
       noLikes.push(false);
     }
-    console.log(noLikes);
     setlikingInteraction(noLikes);
   };
 
   const sendTheLikes = async (likedIndex: number) => {
-    console.log(likingInteraction);
-    console.log("this is the liking interaction", likedIndex);
     const newLikingInteraction = [...likingInteraction];
     newLikingInteraction[likedIndex] = !newLikingInteraction[likedIndex];
     setlikingInteraction(newLikingInteraction);
@@ -168,10 +167,28 @@ export default function Feed({ params }: { params: { id: string } }) {
           `http://localhost:3000/api/feed/post/${postID}`,
           { action: "addALike" }
         );
+        console.log("go go",changingLikeResponse); 
+        if(changingLikeResponse.status === 200){
+          try{
+          const lettingItNow = await axios.post(`http://localhost:3000/api/notifications`, 
+            {
+              method: "addNotif", 
+              postId: postID,
+              userId: findSpotifyIdById(postID), 
+              Type: "Like",
+              FromUserId: spotifyId,
+              Time: new Date() 
+            }
+          )
+          console.log("hello",lettingItNow)
+        }catch(error){
+          console.error("Unable to make the changes"); 
+        }
         const updatedLikes = changingLikeResponse.data.likes;
         const updatedPosts = [...posts];
         updatedPosts[likedIndex].likes = updatedLikes;
         setPosts(updatedPosts);
+        }
       } catch (error) {
         console.error("Unable to make the changes");
       }
@@ -200,17 +217,13 @@ export default function Feed({ params }: { params: { id: string } }) {
     };
   
     try {
-      console.log("we have also entered");
       const theChanges = await axios.post(
         `http://localhost:3000/api/feed/comments`,
         commentData
       );
-      console.log("Able to populate");
       // Ensure that the server sends back the saved comment object
       const savedComment = theChanges.data.savedComment;
-      console.log("look here pls", savedComment._id);
       if (theChanges.status === 200) {
-        console.log(savedComment._id);
         try {
           const addingToTheRest = await axios.patch(
             `http://localhost:3000/api/feed/comments`,
