@@ -2,7 +2,7 @@
 import axios, { AxiosResponse, AxiosError } from "axios";
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import DropDown from "../notifications/Dropdown/page"; // Import the DropDown component
+import DropDown from "./dropdown"; // Import the DropDown component
 import './styles.css';
 interface Notification {
   postId: string;

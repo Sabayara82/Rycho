@@ -1,14 +1,17 @@
+"use client";
+
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+// import { DropDownProps } from "../../components/DropDownProps";
 
-type DropDownProps = {
+export interface DropDownProps {
   notifications: Notification[];
   showDropDown: boolean;
-  toggleDropDown: Function;
-};
+  toggleDropDown: () => void; // Correct the function type definition if needed
+}
 
-interface Notification {
+export interface Notification {
   postId: string;
   userId: string;
   Type: string;
@@ -17,10 +20,20 @@ interface Notification {
   Time: string;
 }
 
-const DropDown: React.FC<DropDownProps> = ({
+
+export default function DropDown({
   notifications,
   showDropDown,
-}: DropDownProps): JSX.Element => {
+  toggleDropDown,
+}: DropDownProps): JSX.Element 
+
+// const Dropdowwn: React.FC<DropDownProps> = ({
+//   notifications,
+//   showDropDown,
+//   toggleDropDown
+// }: DropDownProps): JSX.Element => {
+  
+  {
   const [followerUserNames, setFollowerUserNames] = useState<string[]>([]);
   const token = window.localStorage.getItem("token");
   const router = useRouter();
@@ -63,10 +76,13 @@ const DropDown: React.FC<DropDownProps> = ({
   };
 
   return (
-    <div className={showDropDown ? "dropdown active" : "dropdown"}>
+    <div
+      className={showDropDown ? "dropdown active" : "dropdown"}
+      style={{ zIndex: 999 }}
+    >
       {notifications.map((notification, index) => (
         <button
-        id = "dropdown-button"
+          id="dropdown-button"
           key={index}
           className="relative"
           onClick={() =>
@@ -93,4 +109,3 @@ const DropDown: React.FC<DropDownProps> = ({
   );
 };
 
-export default DropDown;
