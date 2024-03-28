@@ -1,0 +1,1063 @@
+{
+  "id": "7b091646-9906-4d51-9d2c-7354a8ed67df",
+  "version": "2.0",
+  "name": "TestSuite-1",
+  "url": "http://localhost:3000/login",
+  "tests": [{
+    "id": "58db0cfc-b283-4140-a85f-59b275d93131",
+    "name": "LinkToFollowingPage",
+    "commands": [{
+      "id": "66c459b1-ca47-4991-86e6-96ec89a5bb3b",
+      "comment": "",
+      "command": "open",
+      "target": "http://localhost:3000/login",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "49eec81c-dbdb-4509-be6c-18e6a9a9e9d4",
+      "comment": "",
+      "command": "setWindowSize",
+      "target": "1936x1048",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "0d9095cf-5e82-4e2e-a8ea-055498ecc4a1",
+      "comment": "",
+      "command": "click",
+      "target": "linkText=Login",
+      "targets": [
+        ["linkText=Login", "linkText"],
+        ["css=.p-1\\.5", "css:finder"],
+        ["xpath=//a[contains(text(),'Login')]", "xpath:link"],
+        ["xpath=//a[contains(@href, 'https://accounts.spotify.com/authorize?client_id=f9010a7f16bd4939a67261cce4b5cc6f&redirect_uri=http://localhost:3000/login&response_type=token&scope=user-library-read%20user-top-read%20playlist-read-private')]", "xpath:href"],
+        ["xpath=//div/a", "xpath:position"],
+        ["xpath=//a[contains(.,'Login')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "8aca0605-9a7e-477e-861d-614583d91fbc",
+      "comment": "",
+      "command": "click",
+      "target": "xpath=(//a[contains(@href, '#')])[2]",
+      "targets": [
+        ["linkText=1 Following", "linkText"],
+        ["css=.max-h-8:nth-child(3)", "css:finder"],
+        ["xpath=(//a[contains(@href, '#')])[2]", "xpath:href"],
+        ["xpath=//a[2]", "xpath:position"],
+        ["xpath=//a[contains(.,'1 Following')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "b126a812-4748-4887-b2a4-449e9e5c0d20",
+      "comment": "",
+      "command": "assertText",
+      "target": "css=.mb-4",
+      "targets": [
+        ["css=.mb-4", "css:finder"],
+        ["xpath=//h1", "xpath:position"],
+        ["xpath=//h1[contains(.,'Following')]", "xpath:innerText"]
+      ],
+      "value": "Following"
+    }]
+  }, {
+    "id": "75e9fda8-1c9f-41f3-a310-de388f50dd58",
+    "name": "LinkToFollowersPage",
+    "commands": [{
+      "id": "d05ad409-9e9a-4234-a569-2fbcc25c0ce6",
+      "comment": "",
+      "command": "open",
+      "target": "http://localhost:3000/login",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "980b9f5d-4cbc-46b8-914d-e323d280b1d7",
+      "comment": "",
+      "command": "setWindowSize",
+      "target": "1936x1048",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "1af1bd8d-f5d9-4c83-8db1-13e779e53565",
+      "comment": "",
+      "command": "click",
+      "target": "linkText=Login",
+      "targets": [
+        ["linkText=Login", "linkText"],
+        ["css=.p-1\\.5", "css:finder"],
+        ["xpath=//a[contains(text(),'Login')]", "xpath:link"],
+        ["xpath=//a[contains(@href, 'https://accounts.spotify.com/authorize?client_id=f9010a7f16bd4939a67261cce4b5cc6f&redirect_uri=http://localhost:3000/login&response_type=token&scope=user-library-read%20user-top-read%20playlist-read-private')]", "xpath:href"],
+        ["xpath=//div/a", "xpath:position"],
+        ["xpath=//a[contains(.,'Login')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "baed4a95-574f-482d-9068-adda8eaf080d",
+      "comment": "",
+      "command": "click",
+      "target": "xpath=//a[contains(@href, '#')]",
+      "targets": [
+        ["linkText=2 Followers", "linkText"],
+        ["css=.text-lg:nth-child(1)", "css:finder"],
+        ["xpath=//a[contains(@href, '#')]", "xpath:href"],
+        ["xpath=//div[2]/a", "xpath:position"],
+        ["xpath=//a[contains(.,'2 Followers')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "00a21842-8f64-450a-94f9-25f1f1e3b763",
+      "comment": "",
+      "command": "assertText",
+      "target": "css=.mb-4",
+      "targets": [
+        ["css=.mb-4", "css:finder"],
+        ["xpath=//h1", "xpath:position"],
+        ["xpath=//h1[contains(.,'Following')]", "xpath:innerText"]
+      ],
+      "value": "Followers"
+    }]
+  }, {
+    "id": "31724f27-4a3c-4e2f-9b9b-f0e0035be3db",
+    "name": "LoginAndSignOut",
+    "commands": [{
+      "id": "eda5d8a7-8f78-4743-b197-53ee78e45ab0",
+      "comment": "",
+      "command": "open",
+      "target": "http://localhost:3000/login",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "396a2072-a263-454b-a7ec-4656e1017a9f",
+      "comment": "",
+      "command": "setWindowSize",
+      "target": "1936x1048",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "d5fdfd7a-aef2-4260-a5d7-8be1390c6734",
+      "comment": "",
+      "command": "click",
+      "target": "linkText=Login",
+      "targets": [
+        ["linkText=Login", "linkText"],
+        ["css=.p-1\\.5", "css:finder"],
+        ["xpath=//a[contains(text(),'Login')]", "xpath:link"],
+        ["xpath=//a[contains(@href, 'https://accounts.spotify.com/authorize?client_id=f9010a7f16bd4939a67261cce4b5cc6f&redirect_uri=http://localhost:3000/login&response_type=token&scope=user-library-read%20user-top-read%20playlist-read-private')]", "xpath:href"],
+        ["xpath=//div/a", "xpath:position"],
+        ["xpath=//a[contains(.,'Login')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "09a5b79e-7f42-4ab1-bb03-9282bdda00c4",
+      "comment": "",
+      "command": "waitForText",
+      "target": "css=.left-1\\/2",
+      "targets": [
+        ["css=.left-1\\/2", "css:finder"],
+        ["xpath=//h1", "xpath:position"],
+        ["xpath=//h1[contains(.,'Profile')]", "xpath:innerText"]
+      ],
+      "value": "Profile"
+    }, {
+      "id": "aa694b7e-ff35-4934-8b60-7179682bbee6",
+      "comment": "",
+      "command": "click",
+      "target": "css=.py-1\\.5",
+      "targets": [
+        ["css=.py-1\\.5", "css:finder"],
+        ["xpath=//button", "xpath:position"],
+        ["xpath=//button[contains(.,'Sign out')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "06145b3a-71b6-4014-9fa7-e3c7d47b5ad8",
+      "comment": "",
+      "command": "assertText",
+      "target": "css=.text-3xl",
+      "targets": [
+        ["css=.text-3xl", "css:finder"],
+        ["xpath=//h1", "xpath:position"],
+        ["xpath=//h1[contains(.,'Login with Spotify')]", "xpath:innerText"]
+      ],
+      "value": "Login with Spotify"
+    }]
+  }, {
+    "id": "dd33cbfa-dda0-45b2-80be-e187f6e8b280",
+    "name": "NavigateToAFollowingProfile",
+    "commands": [{
+      "id": "b93d9955-769f-45a5-ade7-a045758587b8",
+      "comment": "",
+      "command": "open",
+      "target": "http://localhost:3000/login",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "24edf7e2-7e7c-4acf-a5c6-4f1705e333dd",
+      "comment": "",
+      "command": "setWindowSize",
+      "target": "1936x1048",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "4139d55e-3ac1-45df-bdaa-eb21ad0a3eee",
+      "comment": "",
+      "command": "click",
+      "target": "linkText=Login",
+      "targets": [
+        ["linkText=Login", "linkText"],
+        ["css=.p-1\\.5", "css:finder"],
+        ["xpath=//a[contains(text(),'Login')]", "xpath:link"],
+        ["xpath=//a[contains(@href, 'https://accounts.spotify.com/authorize?client_id=f9010a7f16bd4939a67261cce4b5cc6f&redirect_uri=http://localhost:3000/login&response_type=token&scope=user-library-read%20user-top-read%20playlist-read-private')]", "xpath:href"],
+        ["xpath=//div/a", "xpath:position"],
+        ["xpath=//a[contains(.,'Login')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "89c0def6-e41c-490b-b498-3edb27705592",
+      "comment": "",
+      "command": "click",
+      "target": "xpath=(//a[contains(@href, '#')])[2]",
+      "targets": [
+        ["linkText=1 Following", "linkText"],
+        ["css=.max-h-8:nth-child(3)", "css:finder"],
+        ["xpath=(//a[contains(@href, '#')])[2]", "xpath:href"],
+        ["xpath=//a[2]", "xpath:position"],
+        ["xpath=//a[contains(.,'1 Following')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "7f094e79-bd36-4122-9fb7-7759ddcef119",
+      "comment": "",
+      "command": "click",
+      "target": "css=.text-2xl",
+      "targets": [
+        ["css=.text-2xl", "css:finder"],
+        ["xpath=//span", "xpath:position"],
+        ["xpath=//span[contains(.,'Mahianmuhammad')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "7894e900-98dd-4542-9da3-bef502b6da69",
+      "comment": "",
+      "command": "assertText",
+      "target": "css=.left-1\\/2",
+      "targets": [
+        ["css=.left-1\\/2", "css:finder"],
+        ["xpath=//h1", "xpath:position"],
+        ["xpath=//h1[contains(.,'Profile')]", "xpath:innerText"]
+      ],
+      "value": "Profile"
+    }, {
+      "id": "c50d1891-3039-4400-b5b8-067f6945fd34",
+      "comment": "checks if the follow/unfollow button is present indicating that it's someone else's profile",
+      "command": "assertElementPresent",
+      "target": "css=.left-3\\/4",
+      "targets": [
+        ["css=.left-3\\/4", "css:finder"],
+        ["xpath=//div[2]/div/button", "xpath:position"],
+        ["xpath=//button[contains(.,'Unfollow')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }]
+  }, {
+    "id": "136a2a8b-3fa8-4425-bae6-a6a0f02d93f6",
+    "name": "NavigateToAFollowerProfile",
+    "commands": [{
+      "id": "60f184d7-ca27-463c-8e7b-274fe55f553d",
+      "comment": "",
+      "command": "open",
+      "target": "http://localhost:3000/login",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "fd804fef-015c-4bb9-855f-ef2e605ee499",
+      "comment": "",
+      "command": "setWindowSize",
+      "target": "1936x1048",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "c70f49ae-79db-45e3-8bc5-e1fd3d8f662c",
+      "comment": "",
+      "command": "click",
+      "target": "linkText=Login",
+      "targets": [
+        ["linkText=Login", "linkText"],
+        ["css=.p-1\\.5", "css:finder"],
+        ["xpath=//a[contains(text(),'Login')]", "xpath:link"],
+        ["xpath=//a[contains(@href, 'https://accounts.spotify.com/authorize?client_id=f9010a7f16bd4939a67261cce4b5cc6f&redirect_uri=http://localhost:3000/login&response_type=token&scope=user-library-read%20user-top-read%20playlist-read-private')]", "xpath:href"],
+        ["xpath=//div/a", "xpath:position"],
+        ["xpath=//a[contains(.,'Login')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "70c06fa9-4c42-4fe8-854f-bd4247e46dbc",
+      "comment": "",
+      "command": "click",
+      "target": "xpath=(//a[contains(@href, '#')])[2]",
+      "targets": [
+        ["linkText=1 Following", "linkText"],
+        ["css=.max-h-8:nth-child(3)", "css:finder"],
+        ["xpath=(//a[contains(@href, '#')])[2]", "xpath:href"],
+        ["xpath=//a[2]", "xpath:position"],
+        ["xpath=//a[contains(.,'1 Following')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "749e1396-c284-473f-8705-9d4f56e300b8",
+      "comment": "",
+      "command": "click",
+      "target": "css=.text-2xl",
+      "targets": [
+        ["css=.text-2xl", "css:finder"],
+        ["xpath=//span", "xpath:position"],
+        ["xpath=//span[contains(.,'Mahianmuhammad')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "d607db92-0a0c-4cab-b829-8316c2ac5a30",
+      "comment": "",
+      "command": "assertText",
+      "target": "css=.left-1\\/2",
+      "targets": [
+        ["css=.left-1\\/2", "css:finder"],
+        ["xpath=//h1", "xpath:position"],
+        ["xpath=//h1[contains(.,'Profile')]", "xpath:innerText"]
+      ],
+      "value": "Profile"
+    }, {
+      "id": "48ff1e75-e8f4-40a9-8d60-32a3e49d0fda",
+      "comment": "checks if the follow/unfollow button is present indicating that it's someone else's profile",
+      "command": "assertElementPresent",
+      "target": "css=.left-3\\/4",
+      "targets": [
+        ["css=.left-3\\/4", "css:finder"],
+        ["xpath=//div[2]/div/button", "xpath:position"],
+        ["xpath=//button[contains(.,'Unfollow')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }]
+  }, {
+    "id": "68c84a37-51ed-4bed-b110-72f9740a1bbd",
+    "name": "NavbarSearchUser",
+    "commands": [{
+      "id": "27a6883c-e984-4e74-a7d8-59491dc0fc75",
+      "comment": "",
+      "command": "open",
+      "target": "http://localhost:3000/login",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "af343994-0f15-4664-a7fc-a0c050243134",
+      "comment": "",
+      "command": "setWindowSize",
+      "target": "1936x1048",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "e48c0611-6861-4c12-807f-8e80258270fc",
+      "comment": "",
+      "command": "click",
+      "target": "linkText=Login",
+      "targets": [
+        ["linkText=Login", "linkText"],
+        ["css=.p-1\\.5", "css:finder"],
+        ["xpath=//a[contains(text(),'Login')]", "xpath:link"],
+        ["xpath=//a[contains(@href, 'https://accounts.spotify.com/authorize?client_id=f9010a7f16bd4939a67261cce4b5cc6f&redirect_uri=http://localhost:3000/login&response_type=token&scope=user-library-read%20user-top-read%20playlist-read-private')]", "xpath:href"],
+        ["xpath=//div/a", "xpath:position"],
+        ["xpath=//a[contains(.,'Login')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "01c8bb0e-c244-4863-a433-fa866fd98b2b",
+      "comment": "",
+      "command": "click",
+      "target": "css=.bg-gray-200",
+      "targets": [
+        ["css=.bg-gray-200", "css:finder"],
+        ["xpath=//input[@type='text']", "xpath:attributes"],
+        ["xpath=//input", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "b54752bf-becf-40bd-acd6-5755bb9f5e74",
+      "comment": "",
+      "command": "type",
+      "target": "css=.bg-gray-200",
+      "targets": [
+        ["css=.bg-gray-200", "css:finder"],
+        ["xpath=//input[@type='text']", "xpath:attributes"],
+        ["xpath=//input", "xpath:position"]
+      ],
+      "value": "mahianmuhammad"
+    }, {
+      "id": "33e209cf-ed85-4fd3-9683-43b27cec7a36",
+      "comment": "",
+      "command": "pause",
+      "target": "",
+      "targets": [],
+      "value": "2000"
+    }, {
+      "id": "653236cc-c72f-44bf-82ad-689c7aa447bc",
+      "comment": "",
+      "command": "sendKeys",
+      "target": "css=.bg-gray-200",
+      "targets": [
+        ["css=.bg-gray-200", "css:finder"],
+        ["xpath=//input[@type='text']", "xpath:attributes"],
+        ["xpath=//input", "xpath:position"]
+      ],
+      "value": "${KEY_ENTER}"
+    }, {
+      "id": "bd11f57e-0767-489e-88fb-eeaf6a64889f",
+      "comment": "",
+      "command": "assertText",
+      "target": "css=.mb-2",
+      "targets": [
+        ["css=.mb-2", "css:finder"],
+        ["xpath=//h3", "xpath:position"],
+        ["xpath=//h3[contains(.,'Mahianmuhammad')]", "xpath:innerText"]
+      ],
+      "value": "Mahianmuhammad"
+    }]
+  }, {
+    "id": "993d32ac-cc5e-4370-9476-d7c8473a28eb",
+    "name": "LinkToFeed",
+    "commands": [{
+      "id": "076dc75a-5e91-44af-8aad-d45e3522f2f9",
+      "comment": "",
+      "command": "open",
+      "target": "http://localhost:3000/login",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "d7add480-84f5-4362-82e9-fdeb4f3915ac",
+      "comment": "",
+      "command": "setWindowSize",
+      "target": "1293x850",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "7f522f83-b900-4a1b-867b-48cc348d5aa2",
+      "comment": "",
+      "command": "click",
+      "target": "linkText=Login",
+      "targets": [
+        ["linkText=Login", "linkText"],
+        ["css=.p-1\\.5", "css:finder"],
+        ["xpath=//a[contains(text(),'Login')]", "xpath:link"],
+        ["xpath=//a[contains(@href, 'https://accounts.spotify.com/authorize?client_id=f9010a7f16bd4939a67261cce4b5cc6f&redirect_uri=http://localhost:3000/login&response_type=token&scope=user-library-read%20user-top-read%20playlist-read-private')]", "xpath:href"],
+        ["xpath=//body/div/a", "xpath:position"],
+        ["xpath=//a[contains(.,'Login')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "3df83b56-0068-420d-88ef-e2a162099cb6",
+      "comment": "",
+      "command": "click",
+      "target": "css=.tracking-wider",
+      "targets": [
+        ["css=.tracking-wider", "css:finder"],
+        ["xpath=//p", "xpath:position"],
+        ["xpath=//p[contains(.,'Rycho')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "4eaf276f-fadb-44f5-a4ac-69773081d99f",
+      "comment": "",
+      "command": "waitForText",
+      "target": "css=.font-bebas-neue-regular",
+      "targets": [
+        ["css=.font-bebas-neue-regular", "css:finder"],
+        ["xpath=//p", "xpath:position"],
+        ["xpath=//p[contains(.,'Rycho')]", "xpath:innerText"]
+      ],
+      "value": "Rycho"
+    }, {
+      "id": "649d5291-3d22-44cb-9d9a-c8eb4faa3c2e",
+      "comment": "",
+      "command": "mouseOver",
+      "target": "css=.font-bebas-neue-regular",
+      "targets": [
+        ["css=.font-bebas-neue-regular", "css:finder"],
+        ["xpath=//p", "xpath:position"],
+        ["xpath=//p[contains(.,'Rycho')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "243c4f02-2661-4174-bd47-962f4d41828d",
+      "comment": "",
+      "command": "mouseOut",
+      "target": "css=.text-4xl",
+      "targets": [
+        ["css=.text-4xl", "css:finder"],
+        ["xpath=//p", "xpath:position"],
+        ["xpath=//p[contains(.,'Rycho')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "9324f7b5-ec7e-40b4-9b68-26a32a3f0074",
+      "comment": "",
+      "command": "click",
+      "target": "css=.lg\\3A flex-row:nth-child(1)",
+      "targets": [
+        ["css=.lg\\3A flex-row:nth-child(1)", "css:finder"],
+        ["xpath=//body/div/div/div", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "2220cb35-2b56-4fb8-b58c-f902f5f2cd94",
+      "comment": "",
+      "command": "mouseOver",
+      "target": "css=.flex:nth-child(1) > .flex > .flex > .text-gray-600 > .bg-\\[\\#ffffff\\]",
+      "targets": [
+        ["css=.flex:nth-child(1) > .flex > .flex > .text-gray-600 > .bg-\\[\\#ffffff\\]", "css:finder"],
+        ["xpath=//img[@alt='User']", "xpath:img"],
+        ["xpath=//button/img", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "b5f35c03-1c10-4c1a-84e6-386e54293310",
+      "comment": "",
+      "command": "mouseOut",
+      "target": "css=.opacity-50",
+      "targets": [
+        ["css=.opacity-50", "css:finder"],
+        ["xpath=//img[@alt='User']", "xpath:img"],
+        ["xpath=//button/img", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "6561bf46-9665-4160-abbd-bbd41f373336",
+      "comment": "",
+      "command": "click",
+      "target": "css=.bg-black-200",
+      "targets": [
+        ["css=.bg-black-200", "css:finder"],
+        ["xpath=//body/div", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "02653009-86ba-4686-be6d-5fe60efa7e44",
+      "comment": "",
+      "command": "click",
+      "target": "css=.lg\\3A flex-row:nth-child(1)",
+      "targets": [
+        ["css=.lg\\3A flex-row:nth-child(1)", "css:finder"],
+        ["xpath=//body/div/div/div", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "869b54bb-d2b2-4248-89ee-d2a0f9bcb038",
+      "comment": "",
+      "command": "assertElementPresent",
+      "target": "css=.lg\\3A flex-row:nth-child(1)",
+      "targets": [
+        ["css=.lg\\3A flex-row:nth-child(1)", "css:finder"],
+        ["xpath=//body/div/div/div", "xpath:position"]
+      ],
+      "value": ""
+    }]
+  }, {
+    "id": "14ff8e54-1b4f-4fd9-a0fc-7440d631e647",
+    "name": "LinkToTopSongs",
+    "commands": [{
+      "id": "bfacbd9c-8100-42cd-ba12-282bb82fad14",
+      "comment": "",
+      "command": "open",
+      "target": "http://localhost:3000/login",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "8a4e3db7-41f0-4422-a7c4-73b06e91cdd8",
+      "comment": "",
+      "command": "setWindowSize",
+      "target": "1293x850",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "84af97d5-9395-4405-9625-82c249afba8d",
+      "comment": "",
+      "command": "click",
+      "target": "linkText=Login",
+      "targets": [
+        ["linkText=Login", "linkText"],
+        ["css=.p-1\\.5", "css:finder"],
+        ["xpath=//a[contains(text(),'Login')]", "xpath:link"],
+        ["xpath=//a[contains(@href, 'https://accounts.spotify.com/authorize?client_id=f9010a7f16bd4939a67261cce4b5cc6f&redirect_uri=http://localhost:3000/login&response_type=token&scope=user-library-read%20user-top-read%20playlist-read-private')]", "xpath:href"],
+        ["xpath=//body/div/a", "xpath:position"],
+        ["xpath=//a[contains(.,'Login')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "ebd4ba65-7796-497f-8408-05726e1676ab",
+      "comment": "",
+      "command": "click",
+      "target": "css=.px-6",
+      "targets": [
+        ["css=.px-6", "css:finder"],
+        ["xpath=//div[2]/button", "xpath:position"],
+        ["xpath=//button[contains(.,'Create Post')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "5bcd9ad3-b6c1-413b-9d10-65c4e0cc8402",
+      "comment": "",
+      "command": "waitForText",
+      "target": "css=.text-2xl",
+      "targets": [
+        ["css=.text-2xl", "css:finder"],
+        ["xpath=//h2", "xpath:position"],
+        ["xpath=//h2[contains(.,'Top Songs')]", "xpath:innerText"]
+      ],
+      "value": "Top Songs"
+    }, {
+      "id": "c71ee102-ea22-4a39-93e6-ec1dafc63fe1",
+      "comment": "",
+      "command": "click",
+      "target": "css=.text-2xl",
+      "targets": [
+        ["css=.text-2xl", "css:finder"],
+        ["xpath=//h2", "xpath:position"],
+        ["xpath=//h2[contains(.,'Top Songs')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "070114b1-68a0-4180-baa2-381a40249d14",
+      "comment": "",
+      "command": "assertText",
+      "target": "css=.text-2xl",
+      "targets": [
+        ["css=.text-2xl", "css:finder"],
+        ["xpath=//h2", "xpath:position"],
+        ["xpath=//h2[contains(.,'Top Songs')]", "xpath:innerText"]
+      ],
+      "value": "Top Songs"
+    }]
+  }, {
+    "id": "f85c8e81-124c-4e35-a18f-a5b035e972cf",
+    "name": "PostFunction",
+    "commands": [{
+      "id": "72c24ee5-bb98-4492-9b5a-1ef574706c0f",
+      "comment": "",
+      "command": "open",
+      "target": "http://localhost:3000/login",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "317cb29d-c9bc-4c33-96b5-debd841dc210",
+      "comment": "",
+      "command": "setWindowSize",
+      "target": "1293x850",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "607d96df-daa7-493f-8188-5833acd08536",
+      "comment": "",
+      "command": "click",
+      "target": "linkText=Login",
+      "targets": [
+        ["linkText=Login", "linkText"],
+        ["css=.p-1\\.5", "css:finder"],
+        ["xpath=//a[contains(text(),'Login')]", "xpath:link"],
+        ["xpath=//a[contains(@href, 'https://accounts.spotify.com/authorize?client_id=f9010a7f16bd4939a67261cce4b5cc6f&redirect_uri=http://localhost:3000/login&response_type=token&scope=user-library-read%20user-top-read%20playlist-read-private')]", "xpath:href"],
+        ["xpath=//body/div/a", "xpath:position"],
+        ["xpath=//a[contains(.,'Login')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "b45fa91a-4af1-4960-867f-095c01313a38",
+      "comment": "",
+      "command": "click",
+      "target": "css=.px-6",
+      "targets": [
+        ["css=.px-6", "css:finder"],
+        ["xpath=//div[2]/button", "xpath:position"],
+        ["xpath=//button[contains(.,'Create Post')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "427dfe0a-4c9b-41a0-9bdc-2f8dc841c7e0",
+      "comment": "",
+      "command": "waitForText",
+      "target": "css=.text-2xl",
+      "targets": [
+        ["css=.text-2xl", "css:finder"],
+        ["xpath=//h2", "xpath:position"],
+        ["xpath=//h2[contains(.,'Top Songs')]", "xpath:innerText"]
+      ],
+      "value": "Top Songs"
+    }, {
+      "id": "642b5652-3bba-4ce5-b1b0-47a55466ca7c",
+      "comment": "",
+      "command": "assertText",
+      "target": "css=.song-row:nth-child(1) > .font-bold",
+      "targets": [
+        ["css=.song-row:nth-child(1) > .font-bold", "css:finder"],
+        ["xpath=//div[2]/div/div/div/div", "xpath:position"]
+      ],
+      "value": "1"
+    }]
+  }, {
+    "id": "fb214d13-64d1-41f1-89de-4f870a2bf62f",
+    "name": "ProfileShowing",
+    "commands": [{
+      "id": "6a5e4a42-3b2f-4ceb-82f9-a299b0b624b5",
+      "comment": "",
+      "command": "open",
+      "target": "http://localhost:3000/login",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "f771169b-9a91-47c7-a0da-45db13a8b457",
+      "comment": "",
+      "command": "setWindowSize",
+      "target": "1293x850",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "107937de-60f9-430d-8982-85e24bca554f",
+      "comment": "",
+      "command": "click",
+      "target": "linkText=Login",
+      "targets": [
+        ["linkText=Login", "linkText"],
+        ["css=.p-1\\.5", "css:finder"],
+        ["xpath=//a[contains(text(),'Login')]", "xpath:link"],
+        ["xpath=//a[contains(@href, 'https://accounts.spotify.com/authorize?client_id=f9010a7f16bd4939a67261cce4b5cc6f&redirect_uri=http://localhost:3000/login&response_type=token&scope=user-library-read%20user-top-read%20playlist-read-private')]", "xpath:href"],
+        ["xpath=//body/div/a", "xpath:position"],
+        ["xpath=//a[contains(.,'Login')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "8b9f1280-c5a6-4145-bdf9-66324f9e6b86",
+      "comment": "",
+      "command": "click",
+      "target": "css=.tracking-wider",
+      "targets": [
+        ["css=.tracking-wider", "css:finder"],
+        ["xpath=//p", "xpath:position"],
+        ["xpath=//p[contains(.,'Rycho')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "2ec6c263-7a40-4e97-af76-4593de690172",
+      "comment": "",
+      "command": "click",
+      "target": "css=.bg-white",
+      "targets": [
+        ["css=.bg-white", "css:finder"],
+        ["xpath=//nav", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "a92ed107-41f7-4165-a3ed-4cc120e35e69",
+      "comment": "",
+      "command": "mouseOver",
+      "target": "css=.flex:nth-child(1) > .flex > .flex > .text-gray-600 > .bg-\\[\\#ffffff\\]",
+      "targets": [
+        ["css=.flex:nth-child(1) > .flex > .flex > .text-gray-600 > .bg-\\[\\#ffffff\\]", "css:finder"],
+        ["xpath=//img[@alt='User']", "xpath:img"],
+        ["xpath=//button/img", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "866c045d-c833-4923-a7e2-3ba7b80aef25",
+      "comment": "",
+      "command": "mouseOut",
+      "target": "css=.opacity-50",
+      "targets": [
+        ["css=.opacity-50", "css:finder"],
+        ["xpath=//img[@alt='User']", "xpath:img"],
+        ["xpath=//button/img", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "eadace5c-640a-4d2d-9574-972d3b0a3c20",
+      "comment": "",
+      "command": "",
+      "target": "",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "7c5bcdd7-4704-4aba-bedd-7ecc18fe73be",
+      "comment": "",
+      "command": "click",
+      "target": "css=.object-contain",
+      "targets": [
+        ["css=.object-contain", "css:finder"],
+        ["xpath=(//img[@alt='image not found'])[2]", "xpath:img"],
+        ["xpath=//a/img", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "85710f3e-e9f4-4424-b852-d1e598b9426a",
+      "comment": "",
+      "command": "click",
+      "target": "css=.z-10",
+      "targets": [
+        ["css=.z-10", "css:finder"],
+        ["xpath=//body/div/div[2]", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "8157b362-8af7-4f60-8d13-c19dd5920b55",
+      "comment": "",
+      "command": "waitForText",
+      "target": "css=.left-1\\/2",
+      "targets": [
+        ["css=.left-1\\/2", "css:finder"],
+        ["xpath=//h1", "xpath:position"],
+        ["xpath=//h1[contains(.,'Profile')]", "xpath:innerText"]
+      ],
+      "value": "Profile"
+    }, {
+      "id": "b0c802ac-2ba3-4d01-8320-0cdfcbe372cc",
+      "comment": "",
+      "command": "assertText",
+      "target": "css=.left-1\\/2",
+      "targets": [
+        ["css=.left-1\\/2", "css:finder"],
+        ["xpath=//h1", "xpath:position"],
+        ["xpath=//h1[contains(.,'Profile')]", "xpath:innerText"]
+      ],
+      "value": "Profile"
+    }]
+  }, {
+    "id": "58650ca3-9947-46cf-b716-18f1c12c9cd0",
+    "name": "ProfileChanging",
+    "commands": [{
+      "id": "55b7617b-e591-47da-8da2-29e6c4824bb8",
+      "comment": "",
+      "command": "open",
+      "target": "http://localhost:3000/login",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "0903fe02-be16-4914-a68c-34841f74365e",
+      "comment": "",
+      "command": "setWindowSize",
+      "target": "1293x850",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "c76b2f0d-6bc4-465b-a7c4-dcfb61a71c1f",
+      "comment": "",
+      "command": "click",
+      "target": "linkText=Login",
+      "targets": [
+        ["linkText=Login", "linkText"],
+        ["css=.p-1\\.5", "css:finder"],
+        ["xpath=//a[contains(text(),'Login')]", "xpath:link"],
+        ["xpath=//a[contains(@href, 'https://accounts.spotify.com/authorize?client_id=f9010a7f16bd4939a67261cce4b5cc6f&redirect_uri=http://localhost:3000/login&response_type=token&scope=user-library-read%20user-top-read%20playlist-read-private')]", "xpath:href"],
+        ["xpath=//body/div/a", "xpath:position"],
+        ["xpath=//a[contains(.,'Login')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "097794f8-1f35-4d1a-90c4-4dd728373827",
+      "comment": "",
+      "command": "click",
+      "target": "css=.left-1\\/2",
+      "targets": [
+        ["css=.left-1\\/2", "css:finder"],
+        ["xpath=//h1", "xpath:position"],
+        ["xpath=//h1[contains(.,'Profile')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "223046a6-be69-4a1a-8a85-40531ce66447",
+      "comment": "",
+      "command": "assertText",
+      "target": "css=.left-1\\/2",
+      "targets": [
+        ["css=.left-1\\/2", "css:finder"],
+        ["xpath=//h1", "xpath:position"],
+        ["xpath=//h1[contains(.,'Profile')]", "xpath:innerText"]
+      ],
+      "value": "Profile"
+    }]
+  }, {
+    "id": "ee37b9db-369a-4ceb-b866-2776bf4e0ece",
+    "name": "LinkToPostOption",
+    "commands": [{
+      "id": "50b2cbb7-1c0d-4e3b-a5aa-7237ae5515c3",
+      "comment": "",
+      "command": "open",
+      "target": "http://localhost:3000/login",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "72fae233-f72c-4945-a712-5b5d8d02206b",
+      "comment": "",
+      "command": "setWindowSize",
+      "target": "1293x850",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "f55d85cd-295d-4a29-b840-6cb2e1f0e65e",
+      "comment": "",
+      "command": "click",
+      "target": "linkText=Login",
+      "targets": [
+        ["linkText=Login", "linkText"],
+        ["css=.p-1\\.5", "css:finder"],
+        ["xpath=//a[contains(text(),'Login')]", "xpath:link"],
+        ["xpath=//a[contains(@href, 'https://accounts.spotify.com/authorize?client_id=f9010a7f16bd4939a67261cce4b5cc6f&redirect_uri=http://localhost:3000/login&response_type=token&scope=user-library-read%20user-top-read%20playlist-read-private')]", "xpath:href"],
+        ["xpath=//div/a", "xpath:position"],
+        ["xpath=//a[contains(.,'Login')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "0acc8904-9af3-417d-be10-bffe67a05d47",
+      "comment": "",
+      "command": "click",
+      "target": "css=.px-6",
+      "targets": [
+        ["css=.px-6", "css:finder"],
+        ["xpath=//div[2]/button", "xpath:position"],
+        ["xpath=//button[contains(.,'Create Post')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "36074ef7-985e-4944-9750-b4338331f1ad",
+      "comment": "",
+      "command": "click",
+      "target": "css=.song-row:nth-child(1) .text-black:nth-child(2)",
+      "targets": [
+        ["css=.song-row:nth-child(1) .text-black:nth-child(2)", "css:finder"],
+        ["xpath=//div[3]/div[2]", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "ce252ee7-d77b-4e81-8c01-f9c64dbba0c7",
+      "comment": "",
+      "command": "click",
+      "target": "css=.mr-2",
+      "targets": [
+        ["css=.mr-2", "css:finder"],
+        ["xpath=//div/div/button", "xpath:position"],
+        ["xpath=//button[contains(.,'POST')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "161cb378-1866-4686-aa5d-96afc5de0d56",
+      "comment": "",
+      "command": "mouseOver",
+      "target": "css=.mr-2",
+      "targets": [
+        ["css=.mr-2", "css:finder"],
+        ["xpath=//div/div/button", "xpath:position"],
+        ["xpath=//button[contains(.,'POST')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "f687a97f-2436-4577-9a22-50ebf5568d95",
+      "comment": "",
+      "command": "mouseOut",
+      "target": "css=.mr-2",
+      "targets": [
+        ["css=.mr-2", "css:finder"],
+        ["xpath=//div/div/button", "xpath:position"],
+        ["xpath=//button[contains(.,'POST')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "de2aa983-973e-430f-9b73-8cbaaaadbcfc",
+      "comment": "",
+      "command": "waitForText",
+      "target": "css=.text-2xl",
+      "targets": [
+        ["css=.text-2xl", "css:finder"],
+        ["xpath=//h2", "xpath:position"],
+        ["xpath=//h2[contains(.,'Top Songs')]", "xpath:innerText"]
+      ],
+      "value": "Top Songs"
+    }, {
+      "id": "64a6e6af-40a4-4642-a3b3-8be8c38e8588",
+      "comment": "",
+      "command": "assertElementPresent",
+      "target": "css=.border-b",
+      "targets": [
+        ["css=.border-b", "css:finder"],
+        ["xpath=(//input[@value=''])[2]", "xpath:attributes"],
+        ["xpath=//div[3]/div/input", "xpath:position"]
+      ],
+      "value": ""
+    }]
+  }, {
+    "id": "5792eeda-ccd4-40be-b590-6fee22e0ae0a",
+    "name": "SearchAlbums",
+    "commands": [{
+      "id": "5bf45e9d-4804-42f7-bcf9-8131bcec1611",
+      "comment": "",
+      "command": "open",
+      "target": "http://localhost:3000/login",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "71265ca3-be5b-46a4-b2d5-27aa6d957251",
+      "comment": "",
+      "command": "setWindowSize",
+      "target": "1293x850",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "d8696e03-d078-4191-8eb4-bbc81f521b36",
+      "comment": "",
+      "command": "click",
+      "target": "linkText=Login",
+      "targets": [
+        ["linkText=Login", "linkText"],
+        ["css=.p-1\\.5", "css:finder"],
+        ["xpath=//a[contains(text(),'Login')]", "xpath:link"],
+        ["xpath=//a[contains(@href, 'https://accounts.spotify.com/authorize?client_id=f9010a7f16bd4939a67261cce4b5cc6f&redirect_uri=http://localhost:3000/login&response_type=token&scope=user-library-read%20user-top-read%20playlist-read-private')]", "xpath:href"],
+        ["xpath=//body/div/a", "xpath:position"],
+        ["xpath=//a[contains(.,'Login')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "8dc4d8b2-6d90-402d-9590-018ff021dd18",
+      "comment": "",
+      "command": "click",
+      "target": "css=.px-6",
+      "targets": [
+        ["css=.px-6", "css:finder"],
+        ["xpath=//div[2]/button", "xpath:position"],
+        ["xpath=//button[contains(.,'Create Post')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "608b8fee-c6c4-4921-9e65-05feb7488611",
+      "comment": "",
+      "command": "waitForText",
+      "target": "css=.text-2xl",
+      "targets": [
+        ["css=.text-2xl", "css:finder"],
+        ["xpath=//h2", "xpath:position"],
+        ["xpath=//h2[contains(.,'Top Songs')]", "xpath:innerText"]
+      ],
+      "value": "Top Songs"
+    }, {
+      "id": "56eb6612-6f72-43a5-8984-09e20f3a6179",
+      "comment": "",
+      "command": "assertElementPresent",
+      "target": "css=.max-w-104",
+      "targets": [
+        ["css=.max-w-104", "css:finder"],
+        ["xpath=//input[@value='']", "xpath:attributes"],
+        ["xpath=//div/div/input", "xpath:position"]
+      ],
+      "value": ""
+    }]
+  }],
+  "suites": [{
+    "id": "dcd98857-7a35-4741-aee0-94ac780005c3",
+    "name": "Default Suite",
+    "persistSession": false,
+    "parallel": false,
+    "timeout": 300,
+    "tests": ["58db0cfc-b283-4140-a85f-59b275d93131"]
+  }],
+  "urls": ["http://localhost:3000/", "http://localhost:3000/login"],
+  "plugins": []
+}
