@@ -5,6 +5,7 @@ import axios from "axios";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import NotificationDisplay from "../app/notifications/page"
 
 const Nav = () => {
   const router = useRouter();
@@ -29,20 +30,6 @@ const Nav = () => {
     setToken(null);
   };
 
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const searchTerm = e.target.value.trim();
-    if (searchTerm === "") {
-      setActiveSearch([]);
-      return;
-    }
-    const filteredUsers = userNames
-      .filter((user) =>
-        user.username.toLowerCase().includes(searchTerm.toLowerCase())
-      )
-      .slice(0, 8);
-    setActiveSearch(filteredUsers);
-  };
-
   const getUsersList = async () => {
     try {
       const response = await axios.get("/api/users/profile?action=getAllUsers");
@@ -58,6 +45,44 @@ const Nav = () => {
   };
 
   getUsersList();
+
+  const handleSearch = (e: React.FormEvent<HTMLInputElement>) => {
+    const searchTerm = (e.target as HTMLInputElement).value.trim();
+    
+    if (searchTerm === "") {
+      setActiveSearch([]);
+      return;
+    }
+    const filteredUsers = userNames
+      .filter((user) =>
+        user.username.toLowerCase().includes(searchTerm.toLowerCase())
+      )
+      .slice(0, 8);
+    setActiveSearch(filteredUsers);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      e.preventDefault()
+      if (activeSearch.length === 1) {
+        const profileUrl = `http://localhost:3000/profile/${activeSearch[0].spotifyId}`
+        window.location.href = profileUrl
+      } else {
+        const searchTerm = e.currentTarget.value.trim()
+        const filteredUsers = userNames
+        .filter((user) =>
+          user.username.toLowerCase().includes(searchTerm.toLowerCase())
+        )
+        .slice(0, 8);
+        if (filteredUsers.length === 1) {
+          const profileUrl = `http://localhost:3000/profile/${filteredUsers[0].spotifyId}`
+          window.location.href = profileUrl
+        }
+        console.log(searchTerm)
+        console.log(filteredUsers)
+      }
+    }
+  };
 
   return (
     <nav className="bg-white flex justify-between items-center w-full pt-1 pb-2">
@@ -83,20 +108,21 @@ const Nav = () => {
                   type="text"
                   placeholder="Search User..."
                   className="bg-gray-200 mt-3 mr-4 pl-4 pr-8 py-1 rounded-full focus:outline-none focus:ring  focus:border-blue-300 max-w-52 text-black"
-                  onChange={(e) => handleSearch(e)}
+                  onInput={(e) => handleSearch(e)}
+                  onKeyDown={(e) => handleKeyDown(e)}
                 />
               </div>
               {activeSearch.length > 0 && (
-                <div className="absolute top-14 p-4 bg-[#383838] text-white w-full rounded-xl left-24 ml-2 -translate-x-1/2 flex flex-col gap-2 max-w-52">
+                <div className="absolute top-14 p-4 bg-[#383838] text-white w-full rounded-xl left-24 ml-2 -translate-x-1/2 flex flex-col gap-2 max-w-52 z-50">
                   {activeSearch.map((s) => (
-                    <span
-                      key={s.spotifyId}
-                      className="cursor-pointer hover:bg-[#202020] inline-block px-2 py-2 rounded-lg"
+                    <a 
+                    href={`http://localhost:3000/profile/` + s.spotifyId} 
+                    className={`cursor-pointer inline-block px-2 py-2 rounded-lg hover:bg-[#202020] ${activeSearch.length === 1 ? 'bg-[#202020]' : ''}`}
                     >
-                      <a href={`http://localhost:3000/profile/` + s.spotifyId}>
-                        {s.username}
-                      </a>
-                    </span>
+                      <span key={s.spotifyId}>                      
+                        {s.username}                      
+                      </span>
+                    </a>
                   ))}
                 </div>
               )}
@@ -106,12 +132,7 @@ const Nav = () => {
             </div>
           </div>
           <div className="transition duration-500 border-2 border-white-500 hover:border-[#202020] bg-[#000000] rounded-full h-10 mt-2 w-10 mr-4 flex justify-center items-center cursor-pointer">
-            <Image
-              src="/notification.png"
-              alt="image not found"
-              width={32}
-              height={12}
-            />
+           <NotificationDisplay/>
           </div>
 
           <a

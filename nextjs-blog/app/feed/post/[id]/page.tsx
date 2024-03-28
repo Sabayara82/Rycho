@@ -38,28 +38,18 @@ export default function PostPage({ params }: { params: { id: string } }) {
   const [audioPlayer, setAudioPlayer] = useState<HTMLAudioElement | null>(null);
   const [showPopup, setShowPopup] = useState(false);
   const [caption, setCaption] = useState('');
-
-
-
-
+  const [topSongs, setTopSongs] = useState<Song[]>([]);
+  // const [hoveredSong, setHoveredSong] = useState<null | number>(null);
+  const [postPlaying, setPostPlaying] = useState<{ [postId: string]: boolean }>(
+    {}
+  );
+  const [hoveredSong, setHoveredSong] = useState<Song | null>(null); 
   const filteredAlbums = playlists.filter((playlist) =>
     playlist.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const playPreview = (audioUrl: string) => {
-    if (audioPlayer) {
-      if (audioPlayer.src !== audioUrl) {
-        audioPlayer.src = audioUrl;
-        audioPlayer.play();
-      } else {
-        if (audioPlayer.paused) {
-          audioPlayer.play();
-        } else {
-          audioPlayer.pause();
-        }
-      }
-    }
-  };
+  const [hoveredPostId, setHoveredPostId] = useState(null);
+
 
   useEffect(() => {
     const newAudioPlayer = new Audio();
@@ -68,10 +58,43 @@ export default function PostPage({ params }: { params: { id: string } }) {
     return () => {
       if (newAudioPlayer) {
         newAudioPlayer.pause();
-        newAudioPlayer.src = '';
+        newAudioPlayer.src = "";
       }
     };
   }, []);
+
+  const playPreview = (audioUrl: string) => {
+    if (audioPlayer) {
+      audioPlayer.addEventListener("error", (e) => {
+        console.error("Error with audio playback:", e);
+      });
+
+      if (audioPlayer.src !== audioUrl) {
+        audioPlayer.src = audioUrl;
+        audioPlayer
+          .play()
+          .catch((e) => console.error("Error playing the audio:", e));
+      } else {
+        if (audioPlayer.paused) {
+          audioPlayer
+            .play()
+            .catch((e) => console.error("Error playing the audio:", e));
+        } else {
+          audioPlayer.pause();
+        }
+      }
+    }
+  };
+
+
+
+
+
+  useEffect(() => {
+    if (token) {
+      fetchTopSongs(token);
+    }
+  }, [token]);
 
 
   useEffect(() => {
@@ -158,7 +181,28 @@ export default function PostPage({ params }: { params: { id: string } }) {
       console.error("Error fetching songs for playlist: ", error);
     }
   }
+
+  const fetchTopSongs = async (token:any) => {
+    try {
+      const { data } = await axios.get('https://api.spotify.com/v1/me/top/tracks?limit=6', {
+        headers: {
+          Authorization: 'Bearer ' + token
+        }
+      });
   
+      const topSongsData = Array.isArray(data.items) ? data.items.map((item:any) => ({
+        name: item.name,
+        artist: item.artists[0].name,
+        album: item.album.name,
+        image: item.album.images.length > 0 ? item.album.images[0].url : '',
+        audioUrl: item.preview_url
+      })) : [];
+  
+      setTopSongs(topSongsData);
+    } catch (error) {
+      console.error("Error fetching top songs: ", error);
+    }
+  }
 
   const handlePostSong = async (event: React.MouseEvent<HTMLButtonElement>) => {
     if (selectedSong) {
@@ -171,13 +215,11 @@ export default function PostPage({ params }: { params: { id: string } }) {
           artistName: selectedSong.artist, 
           imageURL: selectedSong.image, 
           audioURL: selectedSong.audioUrl, 
-          caption: "", 
+          caption: caption, 
           likes: 0,
           roomStat: false,
           comments: [],
         });
-
-        console.log("Song posted successfully:", response.data);
       } catch (error) {
         console.error("Error posting song:", error);
       }
@@ -194,15 +236,12 @@ export default function PostPage({ params }: { params: { id: string } }) {
     setSelectedAlbum(null);
   };
 
-  const handleOpenPopup = (song: Song) => {
-    setSelectedSong(song);
-    setShowPopup(true);
-  };
-
   const handleClosePopup = () => {
     setSelectedSong(null);
     setShowPopup(false);
   };
+
+
 
   return (
     <div className="flex flex-col items-center m-4">
@@ -210,41 +249,91 @@ export default function PostPage({ params }: { params: { id: string } }) {
         <input
           type="text"
           placeholder={`Search ${selectedAlbum ? selectedAlbum.name : 'Album'}...`}
-          className="bg-gray-200 mt-3 mr-4 pl-4 pr-8 py-1 rounded-full focus:outline-none focus:ring focus:border-blue-300 max-w-104 text-black"
+          className="mt-3 mr-4 pl-4 pr-8 py-1 rounded-full focus:outline-none focus:ring focus:border-blue-300 max-w-104 text-black"
           value={searchQuery}
           onChange={handleInputChange}
         />
-        <button
-          onClick={handleBackToAlbums}
-          className="mb-4 ml-4 w-10 h-10 bg-gray-500 text-white rounded-full hover:bg-gray-600 items-center justify-center focus:outline-none focus:ring-2 focus:text-black"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 inline-block align-middle" viewBox="0 0 20 20" fill="currentColor">
-            <path fillRule="evenodd" d="M12.293 3.293a1 1 0 011.414 1.414L7.414 10l6.293 6.293a1 1 0 01-1.414 1.414l-7-7a1 1 0 010-1.414l7-7a1 1 0 011.414 0z" clipRule="evenodd" />
-          </svg>
-        </button>
+
       </div>
       <div className="flex flex-wrap justify-center">
-        {/* Playlists */}
-        {showAlbums ? (
-          filteredAlbums.map((playlist, index) => (
-            <div key={index} className="m-4 cursor-pointer" onClick={() => {
-              fetchPlaylistSongs(playlist.id);
-              setSelectedAlbum(playlist); // Set the selected album when clicked
-              setSearchQuery(""); // Clear search query when album is selected
-            }}>
-              <img src={playlist.image} alt={playlist.name} className="w-40 h-40 object-cover rounded-lg mb-2" />
-              <p className="text-center">{playlist.name}</p>
+
+      {showAlbums && (
+      <>
+      {/* Top Songs */}
+      <div>
+        <h2 className="text-2xl text-black font-bold mb-4">Top Songs</h2>
+          <div className="grid grid-cols-2 gap-4">
+            {topSongs.slice(0, 6).map((song, index) => (
+              <div 
+                key={index} 
+                className={`song-row relative flex items-center space-x-4 mb-4 cursor-pointer w-full max-w-screen-lg ${selectedSong === song ? 'bg-gray-400' : ''}`}
+                onClick={() => {
+                  setSelectedSong(prevSong => (prevSong === song ? null : song));
+                  playPreview(song.audioUrl); // Call playPreview function when a song is selected
+                }}
+              >
+                {/* Number */}
+                <div className="font-bold text-xl text-gray-600">{index + 1}</div>
+                {/* Post button */}
+                {selectedSong === song && (
+                  <button
+                    className="mr-2 text-white focus:outline-none group-hover:opacity-100 transition-opacity"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setShowPopup(true);
+                    }}
+                  >
+                    POST
+                  </button>
+                )}
+                {/* Image */}
+                <div className={`w-20 h-20 rounded-md ${selectedSong === song ? 'ml-auto' : ''}`}>
+                  <img src={song.image} alt={song.name} />
+                </div>
+                <div className="flex flex-col">
+                  {/* Song title */}
+                  <div className={`font-bold ${selectedSong === song ? 'text-white' : 'text-black'}`}>{song.name}</div>
+                  {/* Artist */}
+                  <div className={selectedSong === song ? 'text-white' : 'text-black'}>{song.artist}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+          {/* Albums */}
+            <div className="flex flex-wrap justify-center mt-8"> 
+              {filteredAlbums.map((playlist, index) => (
+                <div
+                  key={index}
+                  className="m-4 cursor-pointer flex-shrink-0"
+                  onClick={() => {
+                    fetchPlaylistSongs(playlist.id);
+                    setSelectedAlbum(playlist); 
+                    setSearchQuery(""); 
+                  }}
+                >
+                  <img src={playlist.image} alt={playlist.name} className="w-40 h-40 object-cover rounded-lg mb-2" />
+                  <p className="text-center text-black" style={{ maxWidth: '8em', wordWrap: 'break-word' }}>{playlist.name}</p>
+                </div>
+              ))}
             </div>
-          ))
-        ) : (
+          </>
+          
+        )}
+        
+        {!showAlbums && (
           // Render songs of selected album only
           <div className="flex flex-col items-center m-4">
-            {/* Button to go back */}
-            {/* <button onClick={handleBackToAlbums} className="mb-4 ml-4 w-10 h-10 bg-gray-500 text-white rounded-full hover:bg-gray-600 flex items-center justify-center">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
+
+          {/* Button to go back */}
+            <button
+              onClick={handleBackToAlbums}
+              className="mb-4 ml-4 w-10 h-10 bg-gray-00 text-white rounded-full bg-gray-600 items-center justify-center focus:outline-none focus:ring-2 focus:text-black"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 inline-block align-middle" viewBox="0 0 20 20" fill="currentColor">
                 <path fillRule="evenodd" d="M12.293 3.293a1 1 0 011.414 1.414L7.414 10l6.293 6.293a1 1 0 01-1.414 1.414l-7-7a1 1 0 010-1.414l7-7a1 1 0 011.414 0z" clipRule="evenodd" />
               </svg>
-            </button> */}
+            </button>
   
             {/* Render filtered songs based on search query */}
             <ul>
@@ -256,15 +345,17 @@ export default function PostPage({ params }: { params: { id: string } }) {
                 .map((song, index) => (
                   <li
                     key={index}
-                    className={`cursor-pointer mb-2 flex items-center ${selectedSong === song ? 'bg-gray-300' : ''}`}
+                    className={`cursor-pointer mb-2 flex items-center ${selectedSong === song ? 'bg-gray-400' : ''}`}
                     onClick={() => {
                       setSelectedSong(prevSong => (prevSong === song ? null : song));
+                      playPreview(song.audioUrl);
+                      
                     }}
                   >
-                  {/* Post button */}
-                  {selectedSong === song && (
+                    {/* Post button */}
+                    {selectedSong === song && (
                       <button
-                        className="mr-2 text-black focus:outline-none group-hover:opacity-100 transition-opacity"
+                        className="mr-2 text-white focus:outline-none group-hover:opacity-100 transition-opacity"
                         onClick={(e) => {
                           e.stopPropagation();
                           setShowPopup(true);
@@ -275,60 +366,36 @@ export default function PostPage({ params }: { params: { id: string } }) {
                     )}
                     <img src={song.image} alt={song.name} className="w-12 h-12 object-cover rounded-lg mr-2" />
                     <div>
-                      <p className={`text-base font-semibold ${selectedSong === song ? 'text-gray-800' : ''}`}>{song.name}</p>
-                      <p className={`text-xs ${selectedSong === song ? 'text-gray-800' : ''}`}>{song.artist}</p>
+                      <p className={`text-base font-semibold text-black${selectedSong === song ? 'text-gray-800' : ''}`}>{song.name}</p>
+                      <p className={`text-xs text-black${selectedSong === song ? 'text-gray-800' : ''}`}>{song.artist}</p>
                     </div>
-                    {/* Play/pause button */}
-                    <button
-                      className="ml-auto mr-4 text-gray-600 focus:outline-none"
-                      onClick={(e) => {
-                        e.stopPropagation(); // Prevent the row selection event from triggering
-                        playPreview(song.audioUrl);
-                      }}
-                    >
-                      {/* SVG triangle icon for play button with rounder tips */}
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        {selectedSong === song ? (
-                          // Three lines for pause
-                          <>
-                            <rect x="4" y="6" width="4" height="12" />
-                            <rect x="14" y="6" width="4" height="12" />
-                          </>
-                        ) : (
-                          // Play triangle with rounder tips
-                          <path  strokeLinejoin="round" strokeWidth={2} d="M4 6l16 6-16 6z" />
-                        )}
-                      </svg>
-                    </button>
                   </li>
                 ))}
             </ul>
-  
-            {/* Post song popup */}
-            {showPopup && (
-              <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center popup-background" onClick={handleClosePopup}>
-                <div className="bg-white p-4 rounded-lg shadow-lg" onClick={(e) => e.stopPropagation()}>
-                  <img src={selectedSong?.image} alt={selectedSong?.name} className="w-40 h-40 object-cover rounded-lg mb-2" />
-                  <p className="text-base font-semibold text-black mb-1">{selectedSong?.name}</p>
-                  <p className="text-sm text-black mb-2">{selectedSong?.artist}</p>
-                  <input
-                    type="text"
-                    placeholder="Enter caption..."
-                    className="border-b border-black text-black rounded-none px-2 py-1 w-full"
-                    value={caption}
-                    onChange={(e) => setCaption(e.target.value)}
-                  />
-                  <button onClick={handlePostSong} className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 mt-2">
-                    Post Song
-                  </button>
-                </div>
-              </div>
-            )}
-
+          </div>
+        )}
+        {/* Post song popup */}
+        {showPopup && (
+          <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center popup-background" onClick={handleClosePopup}>
+            <div className="bg-white p-4 rounded-lg shadow-lg" onClick={(e) => e.stopPropagation()}>
+              <img src={selectedSong?.image} alt={selectedSong?.name} className="w-40 h-40 object-cover rounded-lg mb-2" />
+              <p className="text-base font-semibold text-black mb-1">{selectedSong?.name}</p>
+              <p className="text-sm text-black mb-2">{selectedSong?.artist}</p>
+              <input
+                type="text"
+                placeholder="Enter caption..."
+                className="border-b border-black text-black rounded-none px-2 py-1 w-full"
+                value={caption}
+                onChange={(e) => setCaption(e.target.value)}
+              />
+              <button onClick={handlePostSong} className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 mt-2">
+                Post Song
+              </button>
+            </div>
           </div>
         )}
       </div>
     </div>
   );
-  
+
 }

@@ -33,6 +33,14 @@ export default function Home({ params }: { params: { id: string } }) {
     }
   }, [token]);
 
+  useEffect(() => {
+    if (followers.length > 0) {
+      fetchMyFollowing();
+      fetchFollowers();
+      fetchFollowing();
+    }
+  }, [followers, userIsFollowing]);
+
   const fetchUserProfile = async () => {
     try {
       const { data } = await axios.get(
@@ -154,10 +162,12 @@ export default function Home({ params }: { params: { id: string } }) {
           <h1 className="absolute left-1/2 -translate-x-1/2 text-4xl font-semibold pt-12">
             Profile
           </h1>
+
           {spotifyId != params.id && (
             <button
-              className="absolute left-3/4 text-lg font-bebas-neue-regular transition duration-500 border-2 border-white-500 hover:border-[#121212] 
-          bg-gray-700 hover:bg-gray-500 rounded-full mt-10 pt-0.5 px-4 ml-auto"
+              className="absolute left-3/4 text-lg font-bebas-neue-regular transition duration-500 border-2 border-white-500 hover:border-[#202020] 
+            bg-gray-700 hover:bg-gray-500 rounded-full mt-10 pt-0.5 px-4 ml-auto text-white"
+              onClick={handleFollowButtonClick}
             >
               {userIsFollowing === 1 ? "Unfollow" : "Follow"}
             </button>
@@ -180,7 +190,7 @@ export default function Home({ params }: { params: { id: string } }) {
         <div className="flex justify-center space-x-4 mb-8">
           <a
             href="#"
-            onClick={handleFollowingClick}
+            onClick={handleFollowersClick}
             className="max-h-8 text-lg font-bebas-neue-regular transition duration-500 border-2 border-white-500 hover:border-[#121212] 
           bg-gray-700 hover:bg-gray-500 rounded-full mt-1 pt-0.5 px-3"
           >
@@ -190,14 +200,17 @@ export default function Home({ params }: { params: { id: string } }) {
           <a
             href="#"
             onClick={handleFollowingClick}
-            className="max-h-8 text-lg font-bebas-neue-regular transition duration-500 border-2 border-white-500 hover:border-[#121212]
+            className="max-h-8  text-lg font-bebas-neue-regular transition duration-500 border-2 border-white-500 hover:border-[#121212]
           bg-gray-700 hover:bg-gray-500 rounded-full mt-1 pt-0.5 px-3"
           >
             {following.length} Following
           </a>
         </div>
         {spotifyId == params.id && (
-          <button onClick={handleAddPost} className="font-semibold mx-auto max-w-fit transition duration-500 border-2 border-white-500 hover:border-[#121212] bg-gradient-to-r from-yellow-400 via-pink-500 to-purple-500 rounded-full py-2 px-6 mb-4 mt-2">
+          <button
+            onClick={handleAddPost}
+            className="font-semibold mx-auto max-w-fit transition duration-500 border-2 border-white-500 hover:border-[#121212] bg-gradient-to-r from-yellow-400 via-pink-500 to-purple-500 rounded-full py-2 px-6 mb-4 mt-2"
+          >
             Create Post
           </button>
         )}

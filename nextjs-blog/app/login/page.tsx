@@ -53,11 +53,9 @@ export default function LoginPage() {
 
 
     const onLogin = async () => {
+      
       try {
-        const response = await axios.post("/api/users/profile", {
-          method: "addUser",
-          body: user
-        });
+        const response = await axios.post("/api/users/profile",user);
         console.log("Login success", response.data);
       } catch (error:any) {
         console.log("Login failed", error.message);

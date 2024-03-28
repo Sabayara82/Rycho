@@ -1,6 +1,6 @@
 import mongoose, { mongo } from 'mongoose';
 
-// export async function connect(database: 'feed'|'notifications'|'users'|'rycho') {
+// export async function connect(database: 'feed'|'notifications'|'users') {
 //     try {
 //         mongoose.connect(`${process.env.MONGO_URI}${database}`);
 //         const connection = mongoose.connection;
@@ -16,7 +16,6 @@ import mongoose, { mongo } from 'mongoose';
 //         return connection;
 
 //     } catch (error) {
-//         console.log('Something went wrong!');
 //         console.log(error);
 //     }
     
@@ -41,7 +40,7 @@ if (!cached) {
   cached = global.mongoose = { conn: null, promise: null };
 }
 
-export async function connect(database: 'feed' | 'notifications' | 'users' | 'rycho') {
+export async function connect(database: 'feed' | 'notifications' | 'users') {
   if (cached.conn) {
     return cached.conn;
   }

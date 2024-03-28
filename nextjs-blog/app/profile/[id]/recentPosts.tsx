@@ -4,6 +4,14 @@ import axios from "axios";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
+import {
+  fetchPosts,
+  goToUserPage,
+  fetchComments,
+  playPreview,
+  togglePostPlaying,
+} from "@/components/postFunctions";
+import { set } from "mongoose";
 
 export default function RecentPosts({
   params,
@@ -35,62 +43,64 @@ export default function RecentPosts({
   const [posts, setPosts] = useState<any[]>([]);
   const [comments, setComments] = useState<{ [postId: string]: any[] }>({});
   const [visibleCommentsPostId, setVisibleCommentsPostId] = useState(null);
-  const [userProfiles, setUserProfiles] = useState<{[id: string]: { userName: string; userImage: string | null };}>({});
+  const [userProfiles, setUserProfiles] = useState<{
+    [id: string]: { userName: string; userImage: string | null };
+  }>({});
+  const [refreshPosts, setRefreshPosts] = useState(false);
+
+  const [audioPlayer, setAudioPlayer] = useState<HTMLAudioElement | null>(null);
+
+  const [postPlaying, setPostPlaying] = useState<{ [postId: string]: boolean }>(
+    {}
+  );
+  const [hoveredPostId, setHoveredPostId] = useState(null);
+  const [spotifyIdFromUrl, setSpotifyIdFromUrl] = useState("");
 
   const router = useRouter();
 
+  // useEffect to fetch posts when the component mounts
   useEffect(() => {
     if (token && spotifyId) {
-      fetchPosts();
+      fetchPosts(spotifyId, token, setPosts);
+      resetPostPlayingExcept("");
     }
-  }, [token, spotifyId]);
+  }, [token, spotifyId, refreshPosts]);
 
+  // useEffect to fetch comments when posts are shown
   useEffect(() => {
     if (posts.length > 0) {
-      fetchComments();
+      fetchComments(posts, token, setComments);
     }
   }, [posts]);
 
-  const fetchPosts = async () => {
-    try {
-      const response = await axios.get(
-        `http://localhost:3000/api/feed/post/?spotifyId=${spotifyId}`,
-        {
-          headers: {
-            Authorization: "Bearer " + token,
-          },
-        }
-      );
-
-      const { allPosts } = response.data;
-      setPosts(allPosts);
-    } catch (error) {
-      console.error("Error fetching user's posts': ", error);
-    }
-  };
-
-  const fetchComments = async () => {
-    try {
-      const commentsMap: { [postId: string]: any[] } = {}; // Define type annotation for commentsMap
-      for (let i = 0; i < posts.length; i++) {
-        const postId = posts[i]._id;
-        const response = await axios.get(
-          `http://localhost:3000/api/feed/comments/?postId=${postId}`,
-          {
-            headers: {
-              Authorization: "Bearer " + token,
-            },
+  // useEffect to prefetch profiles when comments are shown (optional optimization)
+  useEffect(() => {
+    const prefetchProfiles = async () => {
+      if (visibleCommentsPostId && comments[visibleCommentsPostId]) {
+        const commentList = comments[visibleCommentsPostId];
+        for (const comment of commentList) {
+          if (!userProfiles[comment.spotifyId]) {
+            await fetchUserProfile(comment.spotifyId); // Prefetch and cache
           }
-        );
-        const { allComments } = response.data;
-        commentsMap[postId] = allComments; // Assign comments to the post ID key in the comments map
+        }
       }
+    };
+    prefetchProfiles();
+  }, [visibleCommentsPostId, comments, userProfiles]);
 
-      setComments(commentsMap); // Set comments map to state
-    } catch (error) {
-      console.error("Error fetching posts' comments: ", error);
-    }
-  };
+  // useEffect to create an audio player when the component mounts
+  useEffect(() => {
+    const newAudioPlayer = new Audio();
+    setAudioPlayer(newAudioPlayer);
+    getSpotifyIdFromURL();
+
+    return () => {
+      if (newAudioPlayer) {
+        newAudioPlayer.pause();
+        newAudioPlayer.src = "";
+      }
+    };
+  }, []);
 
   const fetchUserProfile = async (id: string) => {
     // Return cached profile if available
@@ -122,20 +132,50 @@ export default function RecentPosts({
     }
   };
 
-  // useEffect to prefetch profiles when comments are shown (optional optimization)
-  useEffect(() => {
-    const prefetchProfiles = async () => {
-      if (visibleCommentsPostId && comments[visibleCommentsPostId]) {
-        const commentList = comments[visibleCommentsPostId];
-        for (const comment of commentList) {
-          if (!userProfiles[comment.spotifyId]) {
-            await fetchUserProfile(comment.spotifyId); // Prefetch and cache
-          }
+  function confirmDelete(postId: string) {
+    const confirmation = window.confirm(
+      "Are you sure you want to delete this post?"
+    );
+    if (confirmation) {
+      // Call the deletePost function if user confirms
+      deletePost(postId);
+    }
+  }
+
+  const deletePost = async (postId: string) => {
+    try {
+      const response = await axios.delete(
+        `http://localhost:3000/api/feed/post/${postId}`,
+        {
+          headers: {
+            Authorization: "Bearer " + token,
+          },
         }
-      }
-    };
-    prefetchProfiles();
-  }, [visibleCommentsPostId, comments, userProfiles]);
+      );
+      setRefreshPosts((prev) => !prev);
+    } catch (error) {
+      console.error("Error deleting user's posts': ", error);
+    }
+  };
+
+  const resetPostPlayingExcept = async (postIdToExclude: string) => {
+    const updatedPostPlaying: { [postId: string]: boolean } = {};
+    Object.keys(postPlaying).forEach((postId) => {
+      updatedPostPlaying[postId] =
+        postId === postIdToExclude ? postPlaying[postId] : false;
+    });
+    setPostPlaying(updatedPostPlaying);
+  };
+
+  const getSpotifyIdFromURL = async() => {
+    const currentUrl = window.location.href;
+    const urlParts = currentUrl.split("/");
+    const spotifyIdFromUrl = urlParts[urlParts.length - 1];
+    setSpotifyIdFromUrl(spotifyIdFromUrl);
+    console.log("spotifyIdFromUrl",spotifyIdFromUrl);
+    console.log("spotifyId",window.localStorage.getItem("spotifyid"));
+  }
+  
 
   return (
     <div className="min-h-screen bg-transparent rounded-lg">
@@ -143,22 +183,82 @@ export default function RecentPosts({
         posts.map((post) => (
           <div
             key={post._id}
-            // from-brown-900 via-navy-800 to-purple-500
-            // from-brown-900 via-[#946315] to-[#d9b447]
-            
-            className="flex flex-col lg:flex-row bg-zinc-800  justify-between pl-10 w-full max-w-none mx-auto p-8 mb-4 shadow-lg rounded-lg  border-black border-4"
+            className="flex flex-col lg:flex-row  bg-zinc-800  justify-between pl-10 w-full max-w-none mx-auto p-8 mb-4 shadow-lg rounded-lg  border-black border-4"
           >
-            <div className="flex flex-col justify-center items-center mx-auto w-2/6 ">
-              <Image
-                className="bg-[#ffffff] mr-2 rounded-lg min-w-[150px] max-w-[200px]"
-                src={post.imageURL || "/imageplaceholder.png"}
-                alt="User"
-                width={200} // Increase the width
-                height={200} // Increase the height
-                unoptimized={true} // Only if your images are external and can't be optimized by Next.js
-              />
+            <div
+              className="flex relative  justify-center"
+              onMouseEnter={() => {
+                setHoveredPostId(post._id);
+              }}
+              onMouseLeave={() => {
+                setHoveredPostId(null);
+              }}
+            >
+              <button
+                className="text-gray-600 focus:outline-none"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  playPreview(audioPlayer, post.audioURL);
+                  resetPostPlayingExcept(post._id);
+                  togglePostPlaying(
+                    setPostPlaying,
+                    postPlaying.prevState,
+                    post._id
+                  ); // Toggle the boolean value for the post ID
+                }}
+              >
+                {/* Overlay appears on hover */}
+                {hoveredPostId === post._id && (
+                  <div className="absolute inset-0 flex justify-center items-center z-10">
+                    {/* Conditionally show play or pause icon */}
+                    {postPlaying[post._id] ? (
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-36 w-36" // Adjusted size for visibility
+                        viewBox="0 0 24 24"
+                        fill="none" // Changed to 'none' for play/pause icons
+                        stroke="white" // Changed stroke color for better visibility
+                      >
+                        {/* Pause Icon */}
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M10 9v6m4-6v6"
+                        />
+                      </svg>
+                    ) : (
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-36 w-36" // Adjusted size for visibility
+                        viewBox="0 0 24 24"
+                        fill="none" // Changed to 'none' for play/pause icons
+                        stroke="white" // Changed stroke color for better visibility
+                      >
+                        {/* Play Icon */}
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"
+                        />
+                      </svg>
+                    )}
+                  </div>
+                )}
+                <Image
+                  className={`bg-[#ffffff] mr-2 rounded-lg min-w-[150px] max-w-[200px] ${
+                    hoveredPostId === post._id ? "opacity-50" : "opacity-100"
+                  }`}
+                  src={post.imageURL || "/imageplaceholder.png"}
+                  alt="User"
+                  width={200}
+                  height={200}
+                  unoptimized={true}
+                />
+              </button>
             </div>
-            <div className="flex flex-col justify-center items-center mx-auto pl-2 w-2/6 text-center">
+            <div className="flex flex-col justify-center items-center mx-auto pl-2 pt-4  w-2/6 text-center ">
               <h2 className="text-xl drop-shadow-[2px_2px_rgba(100,149,237,0.8)] uppercase font-semibold text-white hover:text-gray-200">
                 <a href={post.albumURL} target="_blank">
                   {post.songName}
@@ -187,11 +287,11 @@ export default function RecentPosts({
               <div className="flex text-sm justify-between items-center mt-2">
                 <div
                   className="cursor-pointer"
-                  onClick={() =>
+                  onClick={() => {
                     setVisibleCommentsPostId(
                       visibleCommentsPostId !== post._id ? post._id : null
-                    )
-                  }
+                    );
+                  }}
                 >
                   Comments: {comments[post._id] ? comments[post._id].length : 0}
                 </div>
@@ -226,7 +326,7 @@ export default function RecentPosts({
                       <>
                         {userProfiles[comment.spotifyId].userImage ? (
                           <Image
-                            className="bg-[#ffffff] rounded-full mr-2"
+                            className="bg-[#ffffff] rounded-full mr-2 max-h-12 max-w-12"
                             src={
                               userProfiles[comment.spotifyId].userImage ||
                               "/user.png"
@@ -235,18 +335,21 @@ export default function RecentPosts({
                             width={50} // Set appropriate width
                             height={50} // Set appropriate height
                             unoptimized={true} // Only if your images are external and can't be optimized by Next.js
+                            priority
                           />
                         ) : null}
                         {/* Comment Name, Content, and Date */}
                         <div>
                           <span className="text-sm ">
                             <strong>
-                              {userProfiles[comment.spotifyId]?.userName}:
+                              <button
+                                onClick={() => goToUserPage(comment.spotifyId)}
+                              >
+                                {userProfiles[comment.spotifyId]?.userName}:
+                              </button>
                             </strong>
                           </span>
-                          <p className="text-sm ">
-                            {comment.content}
-                          </p>
+                          <p className="text-sm ">{comment.content}</p>
                           <p className="text-xs text-purple-300 ">
                             {new Date(comment.createdAt).toLocaleString(
                               "en-US",
@@ -264,7 +367,7 @@ export default function RecentPosts({
                       </>
                     ) : (
                       // Fallback or loading state if profile hasn't been fetched yet
-                      <span>Loading user profile...</span>
+                      <span text-sm>Loading user profile...</span>
                     )}
                   </div>
                 ))
@@ -273,6 +376,31 @@ export default function RecentPosts({
                   No comments available
                 </p>
               ) : null}
+            
+            {/* Delete Button */}
+            { 
+              spotifyIdFromUrl === window.localStorage.getItem("spotifyid") ?
+            (
+              <button onClick={() => confirmDelete(post._id)}>
+              <div className="h-full pt-10 flex justify-end ">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-6 w-6 text-gray-400 hover:text-red-400"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                  />
+                </svg>
+              </div>
+            </button>
+            ):
+            (null) }
             </div>
           </div>
         ))
@@ -284,5 +412,3 @@ export default function RecentPosts({
     </div>
   );
 }
-
-
