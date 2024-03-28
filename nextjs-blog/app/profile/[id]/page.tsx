@@ -16,6 +16,7 @@ export default function Home({ params }: { params: { id: string } }) {
   const [userName, setUserName] = useState<string | null>(null);
   const [userImage, setUserImage] = useState<string | null>(null);
   const [userIsFollowing, setUserFollowing] = useState<number>(0);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     let id = window.localStorage.getItem("spotifyid");
@@ -151,6 +152,18 @@ export default function Home({ params }: { params: { id: string } }) {
   };
 
   const handleAddPost = () => {
+    if (isLoading) {
+      setIsLoading(false);
+      return;
+    }
+
+    setIsLoading(true);
+
+    // Register event listener to track navigation away from the page
+    window.addEventListener('beforeunload', () => {
+      setIsLoading(true);
+    });
+
     router.push("/feed/post/" + params.id);
   };
 
@@ -209,9 +222,16 @@ export default function Home({ params }: { params: { id: string } }) {
         {spotifyId == params.id && (
           <button
             onClick={handleAddPost}
-            className="font-semibold mx-auto max-w-fit transition duration-500 border-2 border-white-500 hover:border-[#121212] bg-gradient-to-r from-yellow-400 via-pink-500 to-purple-500 rounded-full py-2 px-6 mb-4 mt-2"
+            className="flex font-semibold mx-auto max-w-fit transition duration-500 border-2 border-white-500 hover:border-[#121212] bg-gradient-to-r from-yellow-400 via-pink-500 to-purple-500 rounded-full py-2 px-6 mb-4 mt-2"
+            // disabled={isLoading} // Disable button while loading
           >
-            Create Post
+            {isLoading && ( // Render loading icon only when isLoading is true
+              <svg className="animate-spin h-5 w-5 mr-3 text-white" viewBox="0 0 24 24">
+              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2.683 5.717A7.963 7.963 0 014 12H0c0 4.418 3.582 8 8 8v-4c-2.649 0-4.963-1.336-6.317-3.283z"></path>
+            </svg>
+            )}
+            {isLoading ? "Loading Songs..." : "Create Post"}
           </button>
         )}
         <div className="mx-auto w-4/6">

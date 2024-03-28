@@ -4,7 +4,7 @@ import Post from "@/models/postModel";
 
 let connection: any
 
-async function _connect(database: 'feed' | 'notifications' | 'users' | 'rycho'){
+async function _connect(database: "feed" | "notifications" | "users"){
   if (!connection){
     connection = await connect(database);
   }

@@ -167,27 +167,28 @@ export default function Feed({ params }: { params: { id: string } }) {
           `http://localhost:3000/api/feed/post/${postID}`,
           { action: "addALike" }
         );
-        console.log("go go",changingLikeResponse); 
-        if(changingLikeResponse.status === 200){
-          try{
-          const lettingItNow = await axios.post(`http://localhost:3000/api/notifications`, 
-            {
-              method: "addNotif", 
-              postId: postID,
-              userId: findSpotifyIdById(postID), 
-              Type: "Like",
-              FromUserId: spotifyId,
-              Time: new Date() 
-            }
-          )
-          console.log("hello",lettingItNow)
-        }catch(error){
-          console.error("Unable to make the changes"); 
-        }
-        const updatedLikes = changingLikeResponse.data.likes;
-        const updatedPosts = [...posts];
-        updatedPosts[likedIndex].likes = updatedLikes;
-        setPosts(updatedPosts);
+        console.log("go go", changingLikeResponse);
+        if (changingLikeResponse.status === 200) {
+          try {
+            const lettingItNow = await axios.post(
+              `http://localhost:3000/api/notifications`,
+              {
+                method: "addNotif",
+                postId: postID,
+                userId: findSpotifyIdById(postID),
+                Type: "Like",
+                FromUserId: spotifyId,
+                Time: new Date(),
+              }
+            );
+            console.log("hello", lettingItNow);
+          } catch (error) {
+            console.error("Unable to make the changes");
+          }
+          const updatedLikes = changingLikeResponse.data.likes;
+          const updatedPosts = [...posts];
+          updatedPosts[likedIndex].likes = updatedLikes;
+          setPosts(updatedPosts);
         }
       } catch (error) {
         console.error("Unable to make the changes");
@@ -208,6 +209,15 @@ export default function Feed({ params }: { params: { id: string } }) {
     }
   };
 
+  function findSpotifyIdById(_id : number) {
+    for (const post of posts) {
+      if (post._id === _id) {
+        return post.spotifyId;
+      }
+    }
+    return null; // Return null if _id is not found
+  }
+
   const addAComment = async (theInfo: string) => {
     const commentData = {
       postId: commentPostId,
@@ -215,7 +225,7 @@ export default function Feed({ params }: { params: { id: string } }) {
       content: theInfo,
       numberOfLikes: 0,
     };
-  
+
     try {
       const theChanges = await axios.post(
         `http://localhost:3000/api/feed/comments`,
@@ -240,12 +250,11 @@ export default function Feed({ params }: { params: { id: string } }) {
       console.error("oops there is an error", error);
     }
   };
-  
 
   const handleSubmitComment = async (event: React.FormEvent) => {
     event.preventDefault();
     setNewComment("");
-    setCurrentCommentPostId('')
+    setCurrentCommentPostId("");
     try {
       await addAComment(newComment);
     } catch (error) {
@@ -363,18 +372,24 @@ export default function Feed({ params }: { params: { id: string } }) {
                         )}
                       </div>
                     )}
-                    <Image
-                      className={`bg-[#ffffff] mr-2 rounded-lg min-w-[150px] max-w-[200px] ${
-                        hoveredPostId === post._id
-                          ? "opacity-50"
-                          : "opacity-100"
-                      }`}
-                      src={post.imageURL || "/imageplaceholder.png"}
-                      alt="User"
-                      width={200}
-                      height={200}
-                      unoptimized={true}
-                    />
+                    <span className="relative flex mr-2 ">
+                      {postPlaying[post._id] ? (
+                        <span className="animate-heartbeat absolute inset-0 inline-flex rounded-lg h-full w-full bg-red-400 opacity-30"></span>
+                      ) : null}
+                      <Image
+                        className={`bg-[#ffffff] rounded-lg min-w-[150px] max-w-[200px] ${
+                          hoveredPostId === post._id
+                            ? "opacity-50"
+                            : "opacity-100"
+                        }`}
+                        src={post.imageURL || "/imageplaceholder.png"}
+                        alt="User"
+                        width={200}
+                        height={200}
+                        unoptimized={true}
+                        style={{ zIndex: 999 }}
+                      />
+                    </span>
                   </button>
                 </div>
               </div>
@@ -510,8 +525,9 @@ export default function Feed({ params }: { params: { id: string } }) {
                   </p>
                 ) : null}
                 <form onSubmit={handleSubmitComment} className="mt-4 text-sm">
-                  <textarea onClick={() => setCurrentCommentPostId(post._id)}
-                    value={post._id === currentCommentPostId ? newComment : ''}
+                  <textarea
+                    onClick={() => setCurrentCommentPostId(post._id)}
+                    value={post._id === currentCommentPostId ? newComment : ""}
                     onChange={(event) => handleCommentChange(event, index)}
                     placeholder="Write a comment..."
                     className="w-full p-2 rounded-md border text-black"
@@ -528,7 +544,9 @@ export default function Feed({ params }: { params: { id: string } }) {
             </div>
           ))
         ) : (
-          <strong><p className="text-black text-center">Not Following Any Users</p></strong>
+          <strong>
+            <p className="text-black text-center">Not Following Any Users</p>
+          </strong>
         )}
       </div>
     </div>
