@@ -82,7 +82,7 @@ const Nav = () => {
       }
     }
   };
-  
+
   return (
     <nav className="bg-white flex justify-between items-center w-full pt-1 pb-2">
       <a
@@ -96,7 +96,9 @@ const Nav = () => {
           width={30}
           height={30}
         /> */}
-        <p className="font-bebas-neue-regular text-4xl tracking-wider pl-4  text-black">Rycho</p>
+        <p className="font-bebas-neue-regular text-4xl tracking-wider pl-4  text-black">
+          Rycho
+        </p>
       </a>
       {token && (
         <div className="flex justify-end ">
