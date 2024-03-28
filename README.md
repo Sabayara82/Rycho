@@ -25,11 +25,10 @@ Rycho is an audio sharing social media application for music and podcast enthusi
 **Design Artifacts**
 
 ***Software Architecture Diagram***
-![Screenshot 2024-03-27 at 8 49 18 PM](https://github.com/Sabayara82/Rycho/assets/95236604/9fb3cdb4-38c1-4689-8a3b-c865c4f51697)
-
+<img width="920" alt="PNG image" src="https://github.com/Sabayara82/Rycho/assets/95236604/cabd327d-f27e-47f4-aa65-59c7d62d181c">
 
 ***Sequence Diagram***
-
+<img width="734" alt="PNG image 2" src="https://github.com/Sabayara82/Rycho/assets/95236604/a792a6fa-d75a-4b82-b3c8-d90eeb426f8e">
 
 ***Non-OOP Justification***
 
