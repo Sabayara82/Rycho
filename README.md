@@ -71,7 +71,8 @@ Using separate databases aligns well with the microservice and modular architect
 
 ***Sequence Diagram***
 
-<img width="920" alt="PNG image 2" src="https://github.com/Sabayara82/Rycho/assets/95236604/a792a6fa-d75a-4b82-b3c8-d90eeb426f8e">
+<img width="920" alt="PNG image" src="https://github.com/Sabayara82/Rycho/assets/95236604/9061b968-6abe-464c-b41d-09b0434ed1ca">
+
 
 
 ***Non-OOP Justification***
