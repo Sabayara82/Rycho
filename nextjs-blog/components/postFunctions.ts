@@ -28,7 +28,7 @@ export async function fetchPosts(
   const sortedPosts = allOfThePosts.sort((a, b) => {
     const dateA = new Date(a.createdAt);
     const dateB = new Date(b.createdAt);
-    return dateB - dateA; // Sort in descending order
+    return dateB.getTime() - dateA.getTime(); // Sort in descending order
   });
   setPosts(sortedPosts);
   
