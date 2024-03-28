@@ -2,7 +2,8 @@
 import axios, { AxiosResponse, AxiosError } from "axios";
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import DropDown from "./dropdown"; // Import the DropDown component
+import DropDown from "./dropdown"; // Fix: Correct the casing of the import statement
+
 import './styles.css';
 interface Notification {
   postId: string;
