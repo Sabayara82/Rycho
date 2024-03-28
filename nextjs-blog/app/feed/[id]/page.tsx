@@ -34,6 +34,7 @@ export default function Feed({ params }: { params: { id: string } }) {
     {}
   );
   const [hoveredPostId, setHoveredPostId] = useState(null);
+  const [currentCommentPostId, setCurrentCommentPostId] = useState("");
 
   useEffect(() => {
     setToken(window.localStorage.getItem("token"));
@@ -231,6 +232,7 @@ export default function Feed({ params }: { params: { id: string } }) {
   const handleSubmitComment = async (event: React.FormEvent) => {
     event.preventDefault();
     setNewComment("");
+    setCurrentCommentPostId('')
     try {
       await addAComment(newComment);
     } catch (error) {
@@ -495,8 +497,8 @@ export default function Feed({ params }: { params: { id: string } }) {
                   </p>
                 ) : null}
                 <form onSubmit={handleSubmitComment} className="mt-4 text-sm">
-                  <textarea
-                    value={(comments[post._id]===post._id) ? newComment: undefined}
+                  <textarea onClick={() => setCurrentCommentPostId(post._id)}
+                    value={post._id === currentCommentPostId ? newComment : ''}
                     onChange={(event) => handleCommentChange(event, index)}
                     placeholder="Write a comment..."
                     className="w-full p-2 rounded-md border text-black"
