@@ -13,14 +13,11 @@ describe("POST function", () => {
   test("adds a new user", async () => {
     // Mock request body
     const reqBody = {
-      method: "addUser",
-      body: {
         spotifyId: "someId",
         username: "someUsername",
         followers: [],
         following: []
       }
-    };
     
     const request = new NextRequest();
     request.json = jest.fn().mockResolvedValue(reqBody);
@@ -32,7 +29,7 @@ describe("POST function", () => {
 
     await POST(request);
 
-    expect(findOneMock).toHaveBeenCalledWith({ spotifyId: reqBody.body.spotifyId });
+    expect(findOneMock).toHaveBeenCalledWith({ spotifyId: reqBody.spotifyId });
     expect(saveMock).toHaveBeenCalled();
     expect(NextResponse.json).toHaveBeenCalledWith({
       message: "User created successfully",
