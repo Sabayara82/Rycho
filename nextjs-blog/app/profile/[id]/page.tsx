@@ -35,17 +35,8 @@ export default function Home({ params }: { params: { id: string } }) {
       fetchFollowers();
       fetchFollowing();
       gettingFavSong();
-      startTing(); 
     }
   }, [token, hasFavsome, hasPressed]);
-
-  useEffect(() => {
-      const audioElement = new Audio(hasFavsome);
-      audioElement.play().catch(error => {
-        console.error("Autoplay prevented:", error);
-      });
-
-  }, []); 
 
 
   const fetchUserProfile = async () => {
@@ -181,21 +172,6 @@ export default function Home({ params }: { params: { id: string } }) {
     }
   }
 
-  const startTing = async () => {
-    const audioElement = new Audio(hasFavsome);
-    console.log("eneterer", hasFavsome)
-    if(hasFavsome !== "NONE"){
-      if(hasPressed){
-        audioElement.play()
-        console.log("enter", hasFavsome)
-      }
-      else{
-        audioElement.pause();
-      }
-
-    }
-  }
-
   const playingTheSong = () => {
     console.log("pressed")
     if(hasFavsome !== "NONE"){
@@ -219,7 +195,7 @@ export default function Home({ params }: { params: { id: string } }) {
             className="w-16 h-16 mr-2"
           /> 
         ) : null}
-        {hasPressed ? hasFavSong : "Play user's favorite song"}
+        {hasPressed ? hasFavSong : "User's favorite song"}
 
         
       </button>
