@@ -64,7 +64,7 @@ export default function FollowingPage({params} : {params: {id: string}}) {
 
     return (
         <div>
-            <h1 className="text-4xl font-semibold mb-4 mt-8 text-center">Following</h1>
+            <h1 className="text-4xl font-semibold mb-4 mt-8 text-center text-black">Following</h1>
             <div className="container mx-auto mt-8 px-4 bg-[#202020] rounded-lg shadow-md max-w-md">
                 <div className="divide-y divide-[#404040]">
                     {followingList.map((user, index) => (
