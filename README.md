@@ -21,6 +21,46 @@ Rycho is an audio sharing social media application for music and podcast enthusi
 
 **Architectures Used**
 
+*MVC*
+
+1. **Frontend (View of the overall system)**:
+   - This is where users interact with the application. The frontend sends and receives data to and from the various services, acting as a composite view which may aggregate information from multiple controllers.
+
+2. **User/Profile Service (MVC)**:
+   - **Model**: Manages user data and profiles, including operations for creation, retrieval, update, and deletion (CRUD).
+   - **View**: Responsible for presenting the user profile data in a consumable format, potentially including web pages or UI components dedicated to user profile information.
+   - **Controller**: Handles HTTP requests relating to user profiles, invoking the appropriate model operations and returning the data to the frontend.
+
+3. **Post Service (MVC)**:
+   - **Model**: Contains the business logic and data access layer for user posts. It defines the structure and behavior of the data related to posts.
+   - **View**: Renders the post data when requested, which could be a part of the user's profile page or a separate page for individual posts.
+   - **Controller**: Processes commands concerning posts, such as creating a new post or deleting an existing one, and interacts with the model to carry out these operations.
+
+4. **Feed/Content Service (MVC)**:
+   - **Model**: Handles the logic for aggregating content to be displayed in the user's feed. This might involve complex algorithms to personalize content delivery.
+   - **View**: Formats and presents the feed data, which might include a collection of posts, images, and other content types.
+   - **Controller**: Receives requests to get the feed content, communicates with the model to get the personalized feed, and sends it to the frontend to be displayed.
+
+5. **Notifications Service (MVC)**:
+   - **Model**: Manages the storage and state of notifications. It also contains the rules for when notifications should be generated and sent.
+   - **View**: Represents the notification data, possibly through an interface where users can view and interact with their notifications.
+   - **Controller**: Detects events that require notifications and instructs the model to create and store these notifications. It might also handle the delivery of notifications to the user interface.
+  
+*Dedicated Databases*
+
+1. **Decoupling**: Each service operates independently of the others. This decoupling means that changes to one service’s database schema or data access patterns do not affect other services.
+
+2. **Scalability**: Individual databases allow each service to scale its data storage and processing capabilities independently, based on its specific load and performance requirements.
+
+3. **Optimized Data Models**: Services can optimize their database schemas based on their unique needs without having to accommodate the data requirements or access patterns of other services.
+
+4. **Resilience**: Isolated databases contribute to fault tolerance. If one service’s database encounters an issue, it won’t directly impact the availability or performance of the other services' databases.
+
+5. **Data Security**: Separation of databases can enhance security. Each service controls its own data, reducing the risk of a security breach affecting all data across the system.
+
+6. **Maintainability**: Independent databases simplify maintenance operations. Upgrades, backups, migrations, and tuning can be performed per service without coordinating with other teams or services.
+
+Using separate databases aligns well with the microservice and modular architecture principles, providing a strong boundary that enforces the independence of each service.
 
 **Design Artifacts**
 
