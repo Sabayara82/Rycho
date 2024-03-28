@@ -13,7 +13,7 @@ interface User {
     image: string;
 }
 
-export default function FollowingPage({ params }) {
+export default function FollowingPage({params} : {params: {id: string}}) {
     const router = useRouter();
     const [followingList, setFollowingList] = useState<User[]>([]);
 

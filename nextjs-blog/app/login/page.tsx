@@ -3,18 +3,20 @@
 import axios from "axios";
 import Link from "next/link";
 import Image from 'next/image';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {useRouter} from "next/navigation";
 
 
-export default function page() {
+export default function LoginPage() {
     const CLIENT_ID = "f9010a7f16bd4939a67261cce4b5cc6f"
+    const SCOPE = encodeURIComponent("user-library-read user-top-read playlist-read-private");
     const REDIRECT_URI = "http://localhost:3000/login"
     const AUTH_ENDPOINT = "https://accounts.spotify.com/authorize"
+
     const RESPONSE_TYPE = "token"
 
     const router = useRouter();
-    const [user, setUser] = React.useState({
+    const [user, setUser] = useState({
       spotifyId: "",
       username: "",
       followers: [],
@@ -51,11 +53,9 @@ export default function page() {
 
 
     const onLogin = async () => {
+      
       try {
-        const response = await axios.post("/api/users/profile", {
-          method: "addUser",
-          body: user
-        });
+        const response = await axios.post("/api/users/profile",user);
         console.log("Login success", response.data);
       } catch (error:any) {
         console.log("Login failed", error.message);
@@ -72,9 +72,9 @@ export default function page() {
           height={30} 
         />
         <a
-          href={`${AUTH_ENDPOINT}?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=${RESPONSE_TYPE}`}
-          className="p-1.5 px-10 transition duration-500 border-2 border-white-500 hover:border-[#202020] text-white rounded-lg my-10 bg-gradient-to-br from-yellow-400 via-pink-500 to-purple-500"
-        >
+          href={`${AUTH_ENDPOINT}?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=${RESPONSE_TYPE}&scope=${SCOPE}`}
+          className="p-1.5 px-10 transition duration-500 border-2 border-white-500 hover:border-[#202020] rounded-lg my-10 bg-gradient-to-br from-yellow-400 via-pink-500 to-purple-500"
+         >
           Login
         </a>
       </div>
