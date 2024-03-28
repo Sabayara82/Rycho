@@ -24,13 +24,14 @@ Rycho is an audio sharing social media application for music and podcast enthusi
 
 **Design Artifacts**
 
-*Software Architecture Diagram*
+***Software Architecture Diagram***
+![Screenshot 2024-03-27 at 8 49 18 PM](https://github.com/Sabayara82/Rycho/assets/95236604/9fb3cdb4-38c1-4689-8a3b-c865c4f51697)
 
 
-*Sequence Diagram*
+***Sequence Diagram***
 
 
-*Non-OOP Justification*
+***Non-OOP Justification***
 
 Given the scenario where you have separate MVC (Model-View-Controller) components and databases for each part of the system, the overall aim is for a modular architecture, though not strictly adhering to microservices. Object-Oriented Programming (OOP) is a paradigm that is based on the concept of "objects", which can contain data in the form of fields/attributes and code, in the form of procedures/methods.
 
