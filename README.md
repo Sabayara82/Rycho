@@ -91,6 +91,6 @@ Here are our reasons why OOP is not an optimal choice for this kind of project:
 
 5. **Complexity Management**: OOP can sometimes add unnecessary complexity. As our system has clearly defined boundaries where each module has a specific role, a simpler procedural or functional approach could result in more maintainable and understandable code.
 
-In summary, while OOP can be used in distributed systems, it often requires additional patterns and practices to fit well with a modular, loosely-coupled architecture. If the system you're building benefits from clear module boundaries, independent scalability, and the need for diverse data stores, it might be better served by other paradigms better aligned with those requirements, such as functional programming, event-driven architecture, or service-oriented architecture.
+In summary, while OOP can be used in distributed systems, it often requires additional patterns and practices to fit well with a modular, loosely-coupled architecture.
 
 
