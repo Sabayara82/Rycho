@@ -18,7 +18,6 @@ export default function NotificationDisplay() {
   const [showDropDown, setShowDropDown] = useState<boolean>(false);
 
 
-
   const fetchNotifications = async () => {
     try {
       const response: AxiosResponse = await axios.get(
@@ -47,18 +46,14 @@ export default function NotificationDisplay() {
 
   useEffect(() => {
     fetchNotifications();
-  }, []);
+  }, [showDropDown]);
 
   const toggleDropDown = (): void => {
     setShowDropDown((prevState) => !prevState);
   };
 
-  const dismissHandler = (event: React.FocusEvent<HTMLButtonElement>): void => {
-    if (event.currentTarget === event.target) {
-      setShowDropDown(false);
-    }};
     return (
-      <div className="transition duration-500 border-2 border-white-500 hover:border-[#202020] bg-[#000000] rounded-full h-10 mt-2 w-10 mr-4 flex justify-center items-center cursor-pointer">
+      <div >
         <div
           className={showDropDown ? "active" : undefined}
           onClick={toggleDropDown}
@@ -66,8 +61,8 @@ export default function NotificationDisplay() {
           <Image
             src="/notification.png"
             alt="image not found"
-            width={32}
-            height={12}
+            width={200}
+            height={200}
           />
           {showDropDown && (
             <DropDown

@@ -66,6 +66,7 @@ const DropDown: React.FC<DropDownProps> = ({
     <div className={showDropDown ? "dropdown active" : "dropdown"}>
       {notifications.map((notification, index) => (
         <button
+        id = "dropdown-button"
           key={index}
           className="relative"
           onClick={() =>
