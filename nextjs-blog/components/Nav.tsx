@@ -5,6 +5,7 @@ import axios from "axios";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import NotificationDisplay from "../app/notifications/page"
 
 const Nav = () => {
   const router = useRouter();
@@ -72,9 +73,7 @@ const Nav = () => {
           width={30}
           height={30}
         /> */}
-        <p className="font-bebas-neue-regular text-4xl tracking-wider pl-4  text-black">
-          Rycho
-        </p>
+        <p className="font-bebas-neue-regular text-4xl tracking-wider pl-4  text-black">Rycho</p>
       </a>
       {token && (
         <div className="flex justify-end ">
@@ -89,10 +88,7 @@ const Nav = () => {
                 />
               </div>
               {activeSearch.length > 0 && (
-                <div
-                  className="absolute top-14 p-4 bg-[#383838] text-white w-full rounded-xl left-24 ml-2 -translate-x-1/2 flex flex-col gap-2 max-w-52"
-                  style={{ zIndex: 999 }}
-                >
+                <div className="absolute top-14 p-4 bg-[#383838] text-white w-full rounded-xl left-24 ml-2 -translate-x-1/2 flex flex-col gap-2 max-w-52">
                   {activeSearch.map((s) => (
                     <span
                       key={s.spotifyId}
@@ -111,12 +107,7 @@ const Nav = () => {
             </div>
           </div>
           <div className="transition duration-500 border-2 border-white-500 hover:border-[#202020] bg-[#000000] rounded-full h-10 mt-2 w-10 mr-4 flex justify-center items-center cursor-pointer">
-            <Image
-              src="/notification.png"
-              alt="image not found"
-              width={32}
-              height={12}
-            />
+           <NotificationDisplay/>
           </div>
 
           <a
