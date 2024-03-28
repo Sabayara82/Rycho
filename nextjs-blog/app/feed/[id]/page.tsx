@@ -10,6 +10,8 @@ import {
   playPreview,
   togglePostPlaying,
 } from "@/components/postFunctions";
+import { setDefaultAutoSelectFamily } from "net";
+import { setDefaultHighWaterMark } from "stream";
 
 export default function Feed({ params }: { params: { id: string } }) {
   const spotifyId = params.id;
@@ -164,10 +166,28 @@ export default function Feed({ params }: { params: { id: string } }) {
           `http://localhost:3000/api/feed/post/${postID}`,
           { action: "addALike" }
         );
+        console.log("go go",changingLikeResponse); 
+        if(changingLikeResponse.status === 200){
+          try{
+          const lettingItNow = await axios.post(`http://localhost:3000/api/notifications`, 
+            {
+              method: "addNotif", 
+              postId: postID,
+              userId: findSpotifyIdById(postID), 
+              Type: "Like",
+              FromUserId: spotifyId,
+              Time: new Date() 
+            }
+          )
+          console.log("hello",lettingItNow)
+        }catch(error){
+          console.error("Unable to make the changes"); 
+        }
         const updatedLikes = changingLikeResponse.data.likes;
         const updatedPosts = [...posts];
         updatedPosts[likedIndex].likes = updatedLikes;
         setPosts(updatedPosts);
+        }
       } catch (error) {
         console.error("Unable to make the changes");
       }
