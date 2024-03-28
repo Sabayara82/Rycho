@@ -17,8 +17,6 @@ export async function POST(request: NextRequest) {
         })
 
         const savedComment = await newComment.save()
-        console.log(savedComment);
-
         return NextResponse.json({
             message: "Comment created successfully",
             success: true,
